@@ -1,0 +1,19 @@
+{
+  "name": "torrent_scrapper_api",
+  "version": "1.0.0",
+  "description": "A Torrent Scrapper api written in Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tejas Patil",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "express": "^4.17.1",
+    "http": "0.0.0",
+    "i": "^0.3.6",
+    "install": "^0.13.0",
+    "request": "^2.88.0"
+  }
+}
