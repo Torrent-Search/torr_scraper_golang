@@ -9,11 +9,14 @@
   "author": "Tejas Patil",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.19.2",
     "cheerio": "^1.0.0-rc.3",
     "express": "^4.17.1",
     "http": "0.0.0",
     "i": "^0.3.6",
+    "init": "^0.1.2",
     "install": "^0.13.0",
+    "puppeteer": "^2.1.0",
     "request": "^2.88.0"
   }
 }

@@ -6,7 +6,8 @@ const PORT_NO = process.env.PORT_NO;
 const Scraper_1337x = require("./scrapers/1337x.js");
 const skytorrent = require("./scrapers/skytorrents.js");
 const thepiratebay = require("./scrapers/thepiratebay.js");
-
+const rarbg = require("./scrapers/rarbg.js");
+const kickass = require('./scrapers/kickass.js')
 const server = app.listen(PORT_NO || 8080, function()
 {
         console.log("Listening to Port : ",server.address().port);
@@ -16,6 +17,8 @@ const server = app.listen(PORT_NO || 8080, function()
 app.use("/api",Scraper_1337x);
 app.use("/api",skytorrent);
 app.use("/api",thepiratebay);
+app.use("/api",rarbg);
+app.use("/api",kickass);
 
 app.get("/test",function(req,res){
     res.send("<h1>Tejas<h1>");
