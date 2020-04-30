@@ -20,7 +20,6 @@ app.use("/api",thepiratebay);
 app.use("/api",rarbg);
 app.use("/api",kickass);
 
-app.get("/test",function(req,res){
-    res.send("<h1>Tejas<h1>");
-    res.end();
+app.get("/",function(req,res){
+    res.status(200).end();
 })  
