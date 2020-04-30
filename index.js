@@ -1,14 +1,14 @@
 const http = require('http');
 const express = require('express')
 const app = express()
-const PORT_NO = process.env.PORT_NO;
+const PORT_NO = process.env.PORT;
 
 const Scraper_1337x = require("./scrapers/1337x.js");
 const skytorrent = require("./scrapers/skytorrents.js");
 const thepiratebay = require("./scrapers/thepiratebay.js");
 const rarbg = require("./scrapers/rarbg.js");
 const kickass = require('./scrapers/kickass.js')
-const server = app.listen(PORT_NO || 8080, function()
+const server = app.listen(PORT_NO, function()
 {
         console.log("Listening to Port : ",server.address().port);
         console.log("Listening to Address : ",server.address().address);
