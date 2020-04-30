@@ -15,7 +15,7 @@ router.get("/thepiratebay", async function (req, res) {
     const content = await page.content();
     if (content != undefined) {
         let $ = cherrio.load(content);
-        let jsonRes = [];
+        let jsonResponse = [];
         $("#st").each((index, element) => {
             file_name = $(element).children().eq(1).text();
             seeders = $(element).children().eq(4).text();
@@ -28,9 +28,10 @@ router.get("/thepiratebay", async function (req, res) {
                 .children()
                 .eq(0)
                 .attr("href");
-
-            jsonRes.push({
+            url = "https://thepiratebay.org" + $(element).children().eq(1).children().eq(0).attr("href");
+            jsonResponse.push({
                 name: file_name,
+                torrent_url : url,
                 seeders: seeders,
                 leechers: leechers,
                 upload_date: upload_date,
@@ -40,8 +41,8 @@ router.get("/thepiratebay", async function (req, res) {
                 website: "thepiratebay",
             });
         });
-        jsonRes.shift();
-        res.json(jsonRes);
+        jsonResponse.shift();
+        res.json({"data":jsonResponse});
         res.end();
     }
 });

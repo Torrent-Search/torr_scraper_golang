@@ -10,7 +10,7 @@ router.get("/skytorrents", async function (req, res) {
     var search = req.query.search;
     response = await axios.get(BASE_URL + search);
     var $ = cheerio.load(response.data);
-    var jsonRespons = [];
+    var jsonResponse = [];
 
     $("tr.result").each((index, element) => {
         //  File Name
@@ -34,18 +34,25 @@ router.get("/skytorrents", async function (req, res) {
 
         //  magnet
         magnet = $(element).children().eq(0).find("a").eq(2).attr("href");
-
-        jsonRespons.push({
+        url = "https://www.skytorrents.lol" + $(element)
+            .children()
+            .eq(0) //select all the children
+            .children()
+            .eq(0)
+            .attr("href");
+        jsonResponse.push({
             name: name,
+            torrent_url : url,
             seeders: seeders,
             leechers: leechers,
             upload_date: upload_date,
             size: file_size,
+            uploader : "Skytorrents",
             magnet: magnet,
             website: "Skytorrents",
         });
     });
-    res.json(jsonRespons);
+    res.json({"data":jsonResponse});
     res.end();
 });
 

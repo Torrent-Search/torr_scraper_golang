@@ -49,12 +49,13 @@ async function get1337xSearchResult(search) {
 
         jsonRes.push({
             name: name,
+            torrent_url: url,
             seeders: seeders,
             leechers: leechers,
             upload_date: upload_date,
             size: file_size,
             uploader: uploader_name,
-            url: url,
+            magnet : "",
             website: "1337x",
         });
     });
@@ -66,15 +67,8 @@ router.get("/1337x",async function (req, res) {
     var search = req.query.search;
     var jsonResult = await get1337xSearchResult(search);
     jsonResult.shift();
-    res.json(jsonResult);
+    res.json({"data":jsonResult});
     res.end();
-
-    // get1337xSearchResult(search).then((data) => {
-    //     jsonResult = data;
-    //     jsonResult.shift();
-    //     res.json(jsonResult);
-    //     res.end();
-    // });
 });
 
 router.get("/1337x_getMagnet", function (req, res) {

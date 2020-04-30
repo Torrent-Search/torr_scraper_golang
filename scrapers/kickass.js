@@ -28,12 +28,13 @@ async function getKickassSearchResult(search) {
                 $(element).find(".cellMainLink").attr("href");
             jsonRes.push({
                 name: name,
+                torrent_url: url,
                 seeders: seeders,
                 leechers: leechers,
                 upload_date: upload_date,
                 size: file_size,
                 uploader: uploader_name,
-                url: url,
+                magnet : "",
                 website: "Kickass",
             });
         });
@@ -80,7 +81,7 @@ router.get("/kickass", async function (req, res) {
     //  Get the String to be Searched from URL
     let search = req.query.search;
     jsonResult = await getKickassSearchResult(search);
-    res.json(jsonResult);
+    res.json({"data":jsonResult});
     res.end();
 });
 
