@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const request = require("request");
 const cheerio = require("cheerio");
 const axios = require("axios");
 const BASE_URL = require("./constants").BASE_URL_1337X;
