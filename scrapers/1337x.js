@@ -54,8 +54,7 @@ router.get("/1337x", async function (req, res) {
     var search = req.query.search;
     var jsonResult = await get1337xSearchResult(search);
     jsonResult.shift();
-    res.json({ data: jsonResult });
-    res.end();
+    res.status(200).json({ data: jsonResult }).end();
 });
 
 router.get("/1337x_mg", async function (req, res) {
@@ -63,8 +62,7 @@ router.get("/1337x_mg", async function (req, res) {
     response = await axios.get(url);
     $ = cheerio.load(response.data);
     magnet = $(".clearfix ul li a").attr("href");
-    res.json({ magnet: magnet });
-    res.end();
+    res.status(200).json({ magnet: magnet }).end();
 });
 
 module.exports = router;
