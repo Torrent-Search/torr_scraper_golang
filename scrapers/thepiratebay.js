@@ -8,30 +8,34 @@ router.get("/thepiratebay", async function (req, res) {
     search = req.query.search;
 
     const browser = await puppeteer.launch({
-        headless: true
+        headless: true,
     });
     const page = await browser.newPage();
-    await page.goto(BASE_URL + search + "/0/99/0");
+    await page.goto(BASE_URL + search);
     const content = await page.content();
     if (content != undefined) {
         let $ = cherrio.load(content);
         let jsonResponse = [];
         $("#st").each((index, element) => {
-            file_name = $(element).children().eq(1).text();
-            seeders = $(element).children().eq(4).text();
-            leechers = $(element).children().eq(6).text();
-            upload_date = $(element).children().eq(2).text();
-            size = $(element).children().eq(5).text();
-            uploader_name = $(element).children().eq(7).text();
-            magnet_link = $(element)
-                .find(".item-icons")
-                .children()
-                .eq(0)
-                .attr("href");
-            url = "https://thepiratebay.org" + $(element).children().eq(1).children().eq(0).attr("href");
+            file_name = $(element)
+                .find("span.list-item.item-name.item-title")
+                .text();
+            seeders = $(element).find("span.list-item.item-seed").text();
+            leechers = $(element).find("span.list-item.item-leech").text();
+            upload_date = $(element)
+                .find("span.list-item.item-uploaded")
+                .text();
+            size = $(element).find("span.list-item.item-size").text();
+            uploader_name = $(element).find("span.list-item.item-user").text();
+            magnet_link = $(element).find("span.item-icons a").attr("href");
+            url =
+                "https://thepiratebay.org" +
+                $(element)
+                    .find("span.list-item.item-name.item-title a")
+                    .attr("href");
             jsonResponse.push({
                 name: file_name,
-                torrent_url : url,
+                torrent_url: url,
                 seeders: seeders,
                 leechers: leechers,
                 upload_date: upload_date,
@@ -41,8 +45,7 @@ router.get("/thepiratebay", async function (req, res) {
                 website: "thepiratebay",
             });
         });
-        jsonResponse.shift();
-        res.json({"data":jsonResponse});
+        res.json({ data: jsonResponse });
         res.end();
     }
 });
