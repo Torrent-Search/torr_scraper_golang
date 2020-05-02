@@ -14,31 +14,20 @@ router.get("/skytorrents", async function (req, res) {
 
     $("tr.result").each((index, element) => {
         //  File Name
-        name = $(element)
-            .children()
-            .eq(0) //select all the children
-            .children()
-            .eq(0)
-            .text();
+        name = $(element).find("td:nth-child(1) a:nth-child(1)").text()
         //  Seeders
-        seeders = $(element).children().eq(4).text();
+        seeders = $(element).find("td:nth-child(5)").text()
         //  Leechers
-        leechers = $(element).children().eq(5).text();
+        leechers = $(element).find("td:nth-child(6)").text()
         //  Upload Date
-        upload_date = $(element).children().eq(3).text();
+        upload_date = $(element).find("td:nth-child(4)").text()
         //  File Size
-        file_size = $(element)
-            .children()
-            .eq(1) //select all the children
-            .text();
+        file_size = $(element).find("td:nth-child(2)").text()
 
         //  magnet
-        magnet = $(element).children().eq(0).find("a").eq(2).attr("href");
-        url = "https://www.skytorrents.lol" + $(element)
-            .children()
-            .eq(0) //select all the children
-            .children()
-            .eq(0)
+        magnet = $(element).find("td:nth-child(1) a:nth-child(7)").attr("href");
+        url = "https://www.skytorrents.lol/" + $(element)
+            .find("td:nth-child(1) a:nth-child(1)")
             .attr("href");
         jsonResponse.push({
             name: name,
@@ -52,11 +41,7 @@ router.get("/skytorrents", async function (req, res) {
             website: "Skytorrents",
         });
     });
-    res.json({"data":jsonResponse});
-    res.end();
+    res.status(200).json({"data":jsonResponse}).end();
 });
 
-function checkRegex(str1) {
-    return str1.match(/magnet:\?xt=urn:[a-z0-9]+:[a-z0-9]{32}/i);
-}
 module.exports = router;
