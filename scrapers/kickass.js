@@ -19,16 +19,16 @@ router.get("/kickass_mg", async (req, res) => {
 
 router.get("/kickass", async function (req, res) {
     //  Get the String to be Searched from URL
-    const search = req.query.search;
-    const html_response = true;
-    const response = await axios.get(BASE_URL + search).catch((err) => {
+    var search = req.query.search;
+    var html_response = true;
+    var response = await axios.get(BASE_URL + search).catch((err) => {
         console.log(err);
         html_response = false;
     });
-    const $ = cheerio.load(response.data);
-    const selector = $("tr.odd , tr.even");
-    const jsonResult = [];
-    const content_avail = $("span[itemprop=name]").length;
+    var $ = cheerio.load(response.data);
+    var selector = $("tr.odd , tr.even");
+    var jsonResult = [];
+    var content_avail = $("span[itemprop=name]").length;
     if (html_response) {
         if (content_avail == 0) {
             selector.each((i, element) => {
