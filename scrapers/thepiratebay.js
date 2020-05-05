@@ -9,10 +9,7 @@ router.get("/thepiratebay", async function (req, res) {
 
     var browser = await puppeteer
         .launch(
-            {
-                headless: true,
-            },
-            { args: ["--no-sandbox", "--disable-dev-shm-usage"] }
+            { args: ["--no-sandbox", "--disable-dev-shm-usage",'--headless'] }
         )
         .catch((err) => {
             console.log(err);

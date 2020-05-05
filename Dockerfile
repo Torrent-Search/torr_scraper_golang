@@ -40,13 +40,9 @@ RUN apk add --no-cache \
       nodejs \
       yarn
 
-# Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
-
-# Puppeteer v1.19.0 works with Chromium 77.
-RUN yarn add puppeteer@1.19.0
-
+#Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 COPY package*.json ./
 COPY . .
 RUN npm install
+
