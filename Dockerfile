@@ -8,19 +8,19 @@ RUN \
     echo '@edge http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories 
 
     # Update nodejs
-RUN apk add --update --no-cache nodejs nodejs-npm && \
+RUN apk add --update --no-cache nodejs nodejs-npm
     
     # Update packages
-RUN apk --no-cache upgrade && \
+RUN apk --no-cache upgrade
 
     # Install Bash
-RUN apk --no-cache add bash && \
+RUN apk --no-cache add bash
 
     # Install libx11
-RUN apk --no-cache add libx11 && \ 
+RUN apk --no-cache add libx11 
     # Install SSL
     # Alpine 3.5 switched from OpenSSL to LibreSSL
-RUN apk --no-cache add libressl && \
+RUN apk --no-cache add libressl
 
 RUN apk --no-cache add libc6-compat 
 
