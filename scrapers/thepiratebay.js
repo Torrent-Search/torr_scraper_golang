@@ -8,19 +8,24 @@ router.get("/thepiratebay", async function (req, res) {
     search = req.query.search;
 
     var browser = await puppeteer
-        .launch({
-            headless: true,
-        })
+        .launch(
+            {
+                headless: true,
+            },
+            { args: ["--no-sandbox", "--disable-dev-shm-usage"] }
+        )
         .catch((err) => {
             console.log(err);
         });
     var page = await browser.newPage().catch((err) => {
         console.log(err);
     });
-    await page.goto(BASE_URL + search, {waitUntil: 'load', timeout: 3000}).catch((err) => {
-        console.log(err);
-        res.status(200).end();
-    });
+    await page
+        .goto(BASE_URL + search, { waitUntil: "load", timeout: 3000 })
+        .catch((err) => {
+            console.log(err);
+            res.status(200).end();
+        });
     var content = await page.content().catch((err) => {
         console.log(err);
     });

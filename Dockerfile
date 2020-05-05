@@ -5,29 +5,48 @@ RUN \
     # Add edge repo
     echo '@edge http://dl-cdn.alpinelinux.org/alpine/edge/main' >> /etc/apk/repositories && \
     echo '@edge http://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories && \
-    echo '@edge http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories && \
+    echo '@edge http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories 
 
     # Update nodejs
-    apk add --update --no-cache nodejs nodejs-npm && \
+RUN apk add --update --no-cache nodejs nodejs-npm && \
     
     # Update packages
-    apk --no-cache upgrade && \
+RUN apk --no-cache upgrade && \
 
     # Install Bash
-    apk --no-cache add bash && \
+RUN apk --no-cache add bash && \
 
     # Install libx11
-    apk --no-cache add libx11 && \ 
+RUN apk --no-cache add libx11 && \ 
     # Install SSL
     # Alpine 3.5 switched from OpenSSL to LibreSSL
-    apk --no-cache add libressl && \
+RUN apk --no-cache add libressl && \
 
-    apk --no-cache add libc6-compat 
+RUN apk --no-cache add libc6-compat 
 
 RUN apk add --no-cache --update --virtual .build-deps \	
       build-base \	
       libffi-dev \	
       openssl-dev
+
+RUN apk add --no-cache \
+      chromium \
+      nss \
+      freetype \
+      freetype-dev \
+      harfbuzz \
+      ca-certificates \
+      ttf-freefont \
+      nodejs \
+      yarn
+
+# Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
+# Puppeteer v1.19.0 works with Chromium 77.
+RUN yarn add puppeteer@1.19.0
+
 COPY package*.json ./
 COPY . .
 RUN npm install
