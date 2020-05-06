@@ -45,7 +45,7 @@ router.get("/limetorrents", async function (req, res) {
                 leechers: leechers,
                 upload_date: upload_date,
                 size: file_size,
-                uploader: "Limetorrents",
+                uploader: "--",
                 magnet: magnet,
                 website: "Limetorrents",
             });
