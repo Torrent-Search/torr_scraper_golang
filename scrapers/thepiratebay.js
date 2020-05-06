@@ -8,9 +8,16 @@ router.get("/thepiratebay", async function (req, res) {
     search = req.query.search;
 
     var browser = await puppeteer
-        .launch(
-            { args: ["--no-sandbox", "--disable-dev-shm-usage",'--headless'] }
-        )
+        .launch({
+            args: [
+                "--no-sandbox",
+                "--disable-dev-shm-usage",
+                "--headless",
+                "--disable-auto-reload",
+                "--disable-crash-reporte",
+                "--disable-gpu",
+            ],
+        })
         .catch((err) => {
             console.log(err);
         });
@@ -66,8 +73,11 @@ router.get("/thepiratebay", async function (req, res) {
         } else {
             res.status(204).end();
         }
+        await browser.close();
     } else {
         res.status(204).end();
+        await browser.close();
+
     }
 });
 
