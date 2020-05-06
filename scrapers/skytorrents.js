@@ -41,7 +41,7 @@ router.get("/skytorrents", async function (req, res) {
                 leechers: leechers,
                 upload_date: upload_date,
                 size: file_size,
-                uploader: "Skytorrents",
+                uploader: "--",
                 magnet: magnet,
                 website: "Skytorrents",
             });
