@@ -5,11 +5,11 @@ const router = express.Router();
 const Browser = require("zombie");
 const BASE_URL = require("./constants").THEPIRATEBAY_BASE_URL;
 
-router.get("/thepiratebay", async function (req, res) {
+router.get("/thepiratebay", function (req, res) {
     search = req.query.search;
     var browser = new Browser();
-    browser.visit(BASE_URL + search).catch(err=>console.log(err));
-    content = browser.html().catch(err=>console.log(err));
+    browser.visit(BASE_URL + search)//.catch(err=>console.log(err));
+    content = browser.html()//.catch(err=>console.log(err));
     if (content != undefined) {
         var $ = cherrio.load(content);
         var jsonResponse = [];
