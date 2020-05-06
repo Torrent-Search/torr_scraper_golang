@@ -16,6 +16,7 @@ router.get("/thepiratebay", async function (req, res) {
                 "--disable-auto-reload",
                 "--disable-crash-reporte",
                 "--disable-gpu",
+                "--disable-accelerated-2d-canvas"
             ],
         })
         .catch((err) => {
@@ -25,7 +26,7 @@ router.get("/thepiratebay", async function (req, res) {
         console.log(err);
     });
     await page
-        .goto(BASE_URL + search, { waitUntil: "load", timeout: 3000 })
+        .goto(BASE_URL + search, { waitUntil: "load", timeout: 5000 })
         .catch((err) => {
             console.log(err);
             res.status(200).end();
@@ -69,7 +70,11 @@ router.get("/thepiratebay", async function (req, res) {
                     website: "thepiratebay",
                 });
             });
-            res.status(200).json({ data: jsonResponse }).end();
+            try{
+            res.status(200).json({ data: jsonResponse }).end();}
+            catch(e){
+                console.log(e)
+            }
         } else {
             res.status(204).end();
         }
