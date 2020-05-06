@@ -5,7 +5,6 @@ const PORT_NO = process.env.PORT;
 
 const Scraper_1337x = require("./scrapers/1337x.js");
 const skytorrent = require("./scrapers/skytorrents.js");
-const thepiratebay = require("./scrapers/thepiratebay.js");
 // const rarbg = require("./scrapers/rarbg.js");
 const kickass = require('./scrapers/kickass.js')
 const limetorrents = require('./scrapers/limetorrents.js');
@@ -17,7 +16,6 @@ const server = app.listen(PORT_NO, function()
 
 app.use("/api",Scraper_1337x);
 app.use("/api",skytorrent);
-app.use("/api",thepiratebay);
 // app.use("/api",rarbg);
 app.use("/api",kickass);
 app.use("/api",limetorrents)
