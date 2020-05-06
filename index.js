@@ -8,6 +8,8 @@ const skytorrent = require("./scrapers/skytorrents.js");
 // const rarbg = require("./scrapers/rarbg.js");
 const kickass = require('./scrapers/kickass.js')
 const limetorrents = require('./scrapers/limetorrents.js');
+const torrentgalaxy = require('./scrapers/torrent_galaxy.js');
+
 const server = app.listen(PORT_NO, function()
 {
         console.log("Listening to Port : ",server.address().port);
@@ -19,6 +21,8 @@ app.use("/api",skytorrent);
 // app.use("/api",rarbg);
 app.use("/api",kickass);
 app.use("/api",limetorrents)
+app.use("/api",torrentgalaxy)
+
 
 app.get("/",function(req,res){
     res.status(200).end();
