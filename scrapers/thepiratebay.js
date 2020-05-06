@@ -1,39 +1,15 @@
 const express = require("express");
 const cherrio = require("cheerio");
 const router = express.Router();
-const puppeteer = require("puppeteer");
+// const puppeteer = require("puppeteer");
+const Browser = require("zombie");
 const BASE_URL = require("./constants").THEPIRATEBAY_BASE_URL;
 
 router.get("/thepiratebay", async function (req, res) {
     search = req.query.search;
-
-    var browser = await puppeteer
-        .launch({
-            args: [
-                "--no-sandbox",
-                "--disable-dev-shm-usage",
-                "--headless",
-                "--disable-auto-reload",
-                "--disable-crash-reporte",
-                "--disable-gpu",
-                "--disable-accelerated-2d-canvas"
-            ],
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-    var page = await browser.newPage().catch((err) => {
-        console.log(err);
-    });
-    await page
-        .goto(BASE_URL + search, { waitUntil: "load", timeout: 8000 })
-        .catch((err) => {
-            console.log(err);
-            res.status(200).end();
-        });
-    var content = await page.content().catch((err) => {
-        console.log(err);
-    });
+    var browser = new Browser();
+    await browser.visit(BASE_URL + search).catch(err=>console.log(err));
+    content = await browser.html().catch(err=>console.log(err));
     if (content != undefined) {
         var $ = cherrio.load(content);
         var jsonResponse = [];
@@ -78,11 +54,10 @@ router.get("/thepiratebay", async function (req, res) {
         } else {
             res.status(204).end();
         }
-        await browser.close();
+        browser.tabs.closeAll();
     } else {
         res.status(204).end();
-        await browser.close();
-
+        browser.tabs.closeAll();
     }
 });
 
