@@ -26,7 +26,7 @@ router.get("/thepiratebay", async function (req, res) {
         console.log(err);
     });
     await page
-        .goto(BASE_URL + search, { waitUntil: "load", timeout: 5000 })
+        .goto(BASE_URL + search, { waitUntil: "load", timeout: 8000 })
         .catch((err) => {
             console.log(err);
             res.status(200).end();
