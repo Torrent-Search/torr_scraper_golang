@@ -54,6 +54,7 @@ router.get("/nyaa", async function (req, res) {
                 website: "Nyaa",
             });
         });
+        jsonResponse.shift();
         res.status(200).json({ data: jsonResponse }).end();
     } else {
         res.status(204).end();
