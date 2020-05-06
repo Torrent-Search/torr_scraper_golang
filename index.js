@@ -10,6 +10,7 @@ const kickass = require('./scrapers/kickass.js')
 const limetorrents = require('./scrapers/limetorrents.js');
 const torrentgalaxy = require('./scrapers/torrent_galaxy.js');
 const torrentdownloads = require('./scrapers/torrentdownloads.js')
+const nyaa = require('./scrapers/nyaa.js')
 
 const server = app.listen(PORT_NO, function()
 {
@@ -24,7 +25,7 @@ app.use("/api",kickass);
 app.use("/api",limetorrents)
 app.use("/api",torrentgalaxy)
 app.use("/api",torrentdownloads)
-
+app.use("/api",nyaa)
 
 app.get("/",function(req,res){
     res.status(200).end();

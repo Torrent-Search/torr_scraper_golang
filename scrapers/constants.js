@@ -6,4 +6,5 @@ module.exports = {
     LIMETORRENTS_BASE_URL : "https://www.limetorrents.info/search/all/",
     TORRENTGALAXY_BASE_URL : "https://torrentgalaxy.to/torrents.php?search=",
     TORRENTDOWNLOADS_BASE_URL : "https://www.torrentdownload.info/search?q=",
+    NYAA_BASE_URL : "https://nyaa.si/?q="
 };
