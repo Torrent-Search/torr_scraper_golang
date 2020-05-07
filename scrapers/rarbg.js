@@ -31,7 +31,7 @@ router.get("/rarbg", async function (req, res) {
                     });
                 }
                 // console.log(json[0])
-                res.json(jsonResult).status(200).end();
+                res.json({ data: jsonResult }).status(200).end();
             } else {
                 res.status(204).end();
             }
