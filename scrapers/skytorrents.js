@@ -4,6 +4,7 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 //  Base URL of skytorrents
 const BASE_URL = require("./constants").SKYTORRENTS_BASE_URL;
+const isMagnet = require("./utils/misc_utils").isMagnet
 
 router.get("/skytorrents", async function (req, res) {
     //  Get the Item to be searched from Query
@@ -27,10 +28,25 @@ router.get("/skytorrents", async function (req, res) {
             //  File Size
             file_size = $(element).find("td:nth-child(2)").text();
 
-            //  magnet
-            magnet = $(element)
-                .find("td:nth-child(1) a:nth-child(7)")
-                .attr("href");
+            // Magnet
+            magnet_selector_with_child = $(element).find("td:nth-child(1)").children();
+            if(isMagnet(magnet_selector_with_child.eq(5).attr('href')))
+            {
+                magnet = magnet_selector_with_child.eq(5).attr('href');
+            }
+            else if(isMagnet(magnet_selector_with_child.eq(6).attr('href')))
+            {
+                magnet = magnet_selector_with_child.eq(6).attr('href');
+            }
+            else if(isMagnet(magnet_selector_with_child.eq(7).attr('href')))
+            {
+                magnet = magnet_selector_with_child.eq(7).attr('href');
+            }
+            else if(isMagnet(magnet_selector_with_child.eq(8).attr('href')))
+            {
+                magnet = magnet_selector_with_child.eq(8).attr('href');
+            }
+        
             url =
                 "https://www.skytorrents.lol/" +
                 $(element).find("td:nth-child(1) a:nth-child(1)").attr("href");
