@@ -19,7 +19,7 @@ router.get("/kickass_mg", async (req, res) => {
 
 router.get("/kickass", async function (req, res) {
     //  Get the String to be Searched from URL
-    var search = req.query.search;
+    var search = req.query.search.trim();
     var html_response = true;
     var response = await axios.get(BASE_URL + search).catch((err) => {
         console.log(err);

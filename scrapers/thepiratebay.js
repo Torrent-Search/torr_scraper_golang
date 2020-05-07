@@ -7,7 +7,7 @@ const BASE_URL = require("./constants").THEPIRATEBAY_BASE_URL;
 
 router.get("/thepiratebay", async function (req, res) {
     //  Get the Item to be searched from Query
-    var search = req.query.search;
+    var search = req.query.search.trim();
     var response = await axios.get(BASE_URL + search).catch((err) => {
         console.log(err);
     });

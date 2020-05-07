@@ -7,7 +7,7 @@ const isMagnet = require("./utils/misc_utils.js").isMagnet;
 
 router.get("/1337x", async function (req, res) {
     //  Get the String to be Searched from URL
-    var search = req.query.search;
+    var search = req.query.search.trim();
     var response = await axios
         .get(BASE_URL + search + "/1/")
         .catch((err) => console.log(err));

@@ -8,7 +8,7 @@ const isMagnet = require("./utils/misc_utils.js").isMagnet;
 
 router.get("/limetorrents", async function (req, res) {
     //  Get the Item to be searched from Query
-    var search = req.query.search;
+    var search = req.query.search.trim();
     response = await axios.get(BASE_URL + search).catch((err) => {
         console.log(err);
     });

@@ -8,7 +8,7 @@ const rargbapi = require("rarbg-api");
 const filesize = require("filesize");
 
 router.get("/rarbg", async function (req, res) {
-    var search = req.query.search;
+    var search = req.query.search.trim();
     var jsonResult = [];
     rargbapi
         .search(search, { sort: "seeders" })
