@@ -51,7 +51,7 @@ router.get("/horriblesubs", async function (req, res) {
                 size: file_size,
                 uploader: "HorribleSubs",
                 magnet: magnet,
-                website: "Horriblesubs(Scraped on Nyaa)",
+                website: "Horriblesubs",
             });
         });
         jsonResponse.shift();
