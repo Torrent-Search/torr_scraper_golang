@@ -7,5 +7,6 @@ module.exports = {
     TORRENTGALAXY_BASE_URL : "https://torrentgalaxy.to/torrents.php?search=",
     TORRENTDOWNLOADS_BASE_URL : "https://www.torrentdownload.info/search?q=",
     NYAA_BASE_URL : "https://nyaa.si/?q=",
-    THEPIRATEBAY_BASE_URL : "https://thepiratebay.asia/s/?q="
+    THEPIRATEBAY_BASE_URL : "https://thepiratebay.asia/s/?q=",
+    HORRIBLESUBS_BASE_URL : "https://nyaa.si/user/HorribleSubs?f=0&c=0_0&q="
 };

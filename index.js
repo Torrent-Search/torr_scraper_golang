@@ -12,6 +12,7 @@ const torrentgalaxy = require("./scrapers/torrent_galaxy.js");
 const torrentdownloads = require("./scrapers/torrentdownloads.js");
 const nyaa = require("./scrapers/nyaa.js");
 const thepiratebay = require("./scrapers/thepiratebay.js");
+const horriblesubs = require("./scrapers/horriblesubs.js");
 
 const server = app.listen(PORT_NO, function () {
     console.log("Listening to Port : ", server.address().port);
@@ -26,7 +27,8 @@ app.use("/api", limetorrents);
 app.use("/api", torrentgalaxy);
 app.use("/api", torrentdownloads);
 app.use("/api", nyaa);
-app.use("/api", thepiratebay)
+app.use("/api", thepiratebay);
+app.use("/api", horriblesubs);
 
 app.get("/", function (req, res) {
     res.status(200).end();
