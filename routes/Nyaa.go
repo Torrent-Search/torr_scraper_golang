@@ -44,11 +44,13 @@ func Nyaa(c *gin.Context) {
 	}
 
 	selector := doc.Find("tr")
-	log.Println(selector.Length())
+	// log.Println(selector.Length())
 	if selector.Length() > 0 {
 		var infos []TorrentInfo
 		selector.Each(func(i int, s *goquery.Selection) {
-
+			if i == 0 {
+				return
+			}
 			var name string
 			//  File Name
 			if s.Find("td:nth-child(2) a").Length() == 2 {
@@ -69,10 +71,10 @@ func Nyaa(c *gin.Context) {
 			magnet, _ := s.Find("td:nth-child(3) a:nth-child(2)").Attr("href")
 			url, _ := s.Find("td:nth-child(2) a").Attr("href")
 			website := "Nyaa"
-			infos = append(infos, TorrentInfo{name, "https://nyaa.si" + url, seeders, leechers, upload_date, file_size, "Horrible Subs", magnet, website})
+			infos = append(infos, TorrentInfo{name, "https://nyaa.si" + url, seeders, leechers, upload_date, file_size, "--", magnet, website})
 
 		})
-		repo := TorrentRepo{infos[1:len(infos)]}
+		repo := TorrentRepo{infos}
 		c.JSON(200, repo)
 
 	} else {
