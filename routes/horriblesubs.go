@@ -29,7 +29,7 @@ func Horriblesubs(c *gin.Context) {
 	request, err := http.NewRequest("GET", url, nil)
 
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 	}
 	request.Header.Set("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 10_3 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75 Mobile/14E5239e Safari/602.1 RuxitSynthetic/1.0 v1094723656 t4690183951324214268 smf=0")
 	res, err := client.Do(request)
