@@ -29,7 +29,7 @@ func Torrentdownloads(c *gin.Context) {
 	request, err := http.NewRequest("GET", url, nil)
 
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 	}
 	request.Header.Set("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 10_3 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75 Mobile/14E5239e Safari/602.1 RuxitSynthetic/1.0 v1094723656 t4690183951324214268 smf=0")
 	res, err := client.Do(request)
@@ -48,7 +48,7 @@ func Torrentdownloads(c *gin.Context) {
 	if selector.Length() > 1 {
 		var infos []TorrentInfo
 		selector.Each(func(i int, s *goquery.Selection) {
-			if i == 1 {
+			if i == 0 {
 				return
 			}
 			//  File Name
@@ -63,7 +63,7 @@ func Torrentdownloads(c *gin.Context) {
 			file_size := s.Find("td:nth-child(3)").Text()
 
 			//  Uploader Name
-			uploader_name := s.Find("td:nth-child(6)").Text()
+			uploader_name := "--"
 
 			//  url
 			url =
@@ -74,7 +74,7 @@ func Torrentdownloads(c *gin.Context) {
 			infos = append(infos, TorrentInfo{name, url, seeders, leechers, upload_date, file_size, uploader_name, "", website})
 
 		})
-		repo := TorrentRepo{infos[1:len(infos)]}
+		repo := TorrentRepo{infos}
 		c.JSON(200, repo)
 
 	} else {
