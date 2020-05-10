@@ -3,6 +3,7 @@ package routes
 import (
 	"log"
 	"regexp"
+	"strings"
 )
 
 func isMagnet(str string) bool {
@@ -16,4 +17,8 @@ func isMagnet(str string) bool {
 	// println(str)
 	// println(match)
 	return match
+}
+
+func replace(str string, new string, old string) string {
+	return strings.ReplaceAll(str, new, old)
 }

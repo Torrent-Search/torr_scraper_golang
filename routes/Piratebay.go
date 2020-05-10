@@ -44,10 +44,10 @@ func PirateBay(c *gin.Context) {
 	}
 
 	selector := doc.Find("tr")
-	if selector.Length() > 1 {
+	if selector.Length() > 0 {
 		var infos []TorrentInfo
 		selector.Each(func(i int, s *goquery.Selection) {
-			if i == 1 {
+			if i == 0 || i == selector.Length()-1 {
 				return
 			}
 			name := s.Find("td:nth-child(2) div a").Text()
@@ -56,14 +56,15 @@ func PirateBay(c *gin.Context) {
 			//  Leechers
 			leechers := s.Find("td:nth-child(4)").Text()
 			//  Upload Date
-			file_info := s.Find("font.detDesc").Text()
-			// upload_date_temp := strings.Split(file_info, ",")[0]
+			file_info := s.Find("td:nth-child(2) font.detDesc").Text() //Children().Eq(5).Text()
+			// log.Println(file_info)
+			upload_date_temp := strings.Split(file_info, ",")
 			//  Upload Date
-			upload_date := "" //strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(upload_date_temp, " ", "-"), "Uploaded ", ""), " ", "-")
+			upload_date := replace(replace(upload_date_temp[0], "Uploaded ", ""), " ", "-")
 			//  File Size
-			file_size := file_info //string(len(strings.Split(file_info, ", "))) //strings.ReplaceAll(strings.Split(file_info, ", ")[1], "size ", "")
+			file_size := replace(upload_date_temp[1], " Size ", "") //string(len(strings.Split(file_info, ", "))) //strings.ReplaceAll(strings.Split(file_info, ", ")[1], "size ", "")
 			// Uploader
-			uploader := "" //strings.ReplaceAll(strings.Split(file_info, ",")[2], "ULed by ", "")
+			uploader := replace(upload_date_temp[2], " ULed by ", "") //strings.ReplaceAll(strings.Split(file_info, ",")[2], "ULed by ", "")
 			// Magnet
 			magnet, _ := s.Find("td:nth-child(2) a:nth-child(2)").Attr("href")
 			url, _ := s.Find("td:nth-child(2) div a").Attr("href")
@@ -71,7 +72,7 @@ func PirateBay(c *gin.Context) {
 			infos = append(infos, TorrentInfo{name, url, seeders, leechers, upload_date, file_size, uploader, magnet, website})
 
 		})
-		repo := TorrentRepo{infos[1:len(infos)]}
+		repo := TorrentRepo{infos}
 		c.JSON(200, repo)
 
 	} else {
