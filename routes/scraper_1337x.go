@@ -48,7 +48,7 @@ func Torr_1337x(c *gin.Context) {
 	if selector.Length() > 0 {
 		var infos []TorrentInfo
 		selector.Each(func(i int, s *goquery.Selection) {
-			if i == 1 {
+			if i == 0 {
 				return
 			}
 			//  File Name
@@ -74,7 +74,7 @@ func Torr_1337x(c *gin.Context) {
 			infos = append(infos, TorrentInfo{name, url, seeders, leechers, upload_date, file_size, uploader_name, "", website})
 
 		})
-		repo := TorrentRepo{infos[1:len(infos)]}
+		repo := TorrentRepo{infos}
 		c.JSON(200, repo)
 
 	} else {
