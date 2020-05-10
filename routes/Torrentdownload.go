@@ -69,7 +69,7 @@ func Torrentdownloads(c *gin.Context) {
 			url =
 				"https://www.torrentdownload.info" +
 					s.Find("td.tdleft").Find("a").AttrOr("href", "")
-			website := "Torrent Download"
+			website := "torrentdownloads"
 
 			infos = append(infos, TorrentInfo{name, url, seeders, leechers, upload_date, file_size, uploader_name, "", website})
 
