@@ -49,7 +49,7 @@ func Horriblesubs(c *gin.Context) {
 		var infos []TorrentInfo
 		selector.Each(func(i int, s *goquery.Selection) {
 
-			if i == 1 {
+			if i == 0 {
 				return
 			}
 			var name string
