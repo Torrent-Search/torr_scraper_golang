@@ -47,18 +47,20 @@ func Limetorrents(c *gin.Context) {
 	if selector.Length() > 1 {
 		var infos []TorrentInfo
 		selector.Each(func(i int, s *goquery.Selection) {
-
+			if i == 0 {
+				return
+			}
 			name := s.Find("td:nth-child(1)").Text()
 			// Seeders
 			seeders := s.Find("td:nth-child(4)").Text()
 			//  Leechers
 			leechers := s.Find("td:nth-child(5)").Text()
 			//  Upload Date
-			upload_date := s.Find("td:nth-child(2)").Text()
+			upload_date := strings.Split(s.Find("td:nth-child(2)").Text(), " - ")[0]
 			//  File Size
 			file_size := s.Find("td:nth-child(3)").Text()
 			// Uploader
-			uploader := s.Find("td:nth-child(1)").Text()
+			uploader := "--"
 			// Magnet
 			magnet := ""
 			url, _ := s.Find("td.tdleft div.tt-name a:nth-child(2)").Attr("href")
@@ -66,7 +68,7 @@ func Limetorrents(c *gin.Context) {
 			infos = append(infos, TorrentInfo{name, "https://www.limetorrents.info" + url, seeders, leechers, upload_date, file_size, uploader, magnet, website})
 
 		})
-		repo := TorrentRepo{infos[1:len(infos)]}
+		repo := TorrentRepo{infos}
 		c.JSON(200, repo)
 
 	} else {
