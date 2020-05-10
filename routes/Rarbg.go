@@ -10,7 +10,7 @@ import (
 
 func Rarbg(c *gin.Context) {
 	search := strings.TrimSpace(c.Query("search"))
-	api, err := New("cli")
+	api, err := New(search)
 	if err != nil {
 		log.Println(err)
 		c.AbortWithStatus(500)
