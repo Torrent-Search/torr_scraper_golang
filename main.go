@@ -28,6 +28,7 @@ func main() {
 		api.GET("/torrentdownloads", routes.Torrentdownloads)
 		api.GET("/torrentdownloads_mg", routes.Torrrentdownload_getMagnet)
 		api.GET("/tgx", routes.Torrentgalaxy)
+		api.GET("/rarbg", routes.Rarbg)
 		// api.GET("/torrentdownloads_mg", routes.Torrrentdownload_getMagnet)
 
 	}
