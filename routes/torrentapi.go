@@ -1,4 +1,3 @@
-// Package torrentapi provides simple and easy Golang interface for RARBG Torrent API v2 (https://torrentapi.org)
 package routes
 
 import (
@@ -36,12 +35,6 @@ const (
 	imdbNotFound     = 10
 )
 
-// Token keeps token and it's expiration date.
-type Token struct {
-	Token   string    `json:"token"`
-	Expires time.Time `json:"-"`
-}
-
 // EpisodeInfo keepsinformation from "episode_info" key from results. Some of the fields may be empty.
 type EpisodeInfo struct {
 	ImDB       string `json:"imdb"`
@@ -70,6 +63,7 @@ func (t *Token) IsValid() bool {
 // SearchString adds search string to search query.
 func (a *API) SearchString(query string) *API {
 	a.Query += fmt.Sprintf("&search_string=%s", url.QueryEscape(query))
+
 	return a
 }
 

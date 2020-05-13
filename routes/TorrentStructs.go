@@ -43,6 +43,11 @@ type APIResponse struct {
 	ErrorCode int             `json:"error_code"`
 }
 
+// Token keeps token and it's expiration date.
+type Token struct {
+	Token   string    `json:"token"`
+	Expires time.Time `json:"-"`
+}
 type API struct {
 	client          *http.Client
 	Query           string

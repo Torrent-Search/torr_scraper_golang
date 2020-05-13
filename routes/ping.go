@@ -8,5 +8,4 @@ import (
 
 func Ping(c *gin.Context) {
 	c.Status(http.StatusOK)
-	c.Writer.WriteString("Ping")
 }
