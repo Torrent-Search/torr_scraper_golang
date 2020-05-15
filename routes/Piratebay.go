@@ -28,12 +28,12 @@ func PirateBay(c *gin.Context) {
 	res, _ := client.Do(request)
 	doc, _ := goquery.NewDocumentFromReader(res.Body)
 	selector := doc.Find("#st")
-	if selector.Length() > 0 {
+	if selector.Length() > 1 {
 		infos := make([]TorrentInfo, 0)
 		selector.Each(func(i int, s *goquery.Selection) {
-			if i == 0 || i == selector.Length()-1 {
-				return
-			}
+			// if i == 0 {
+			// 	return
+			// }
 			tr := TorrentInfo{}
 			tr.Name = s.Find("span.list-item.item-name.item-title").Text()
 			tr.Seeders = s.Find("span.list-item.item-seed").Text()
