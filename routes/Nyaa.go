@@ -12,8 +12,8 @@ import (
 )
 
 func Nyaa(c *gin.Context) {
-	search := c.Query("search")
-	url := fmt.Sprint("https://nyaa.si/?q=", strings.TrimSpace(search))
+	search := strings.ReplaceAll(strings.TrimSpace(c.Query("search")), " ", "%20")
+	url := fmt.Sprint("https://nyaa.si/?q=", search)
 	var netTransport = &http.Transport{
 		Dial: (&net.Dialer{
 			Timeout: 10 * time.Second,

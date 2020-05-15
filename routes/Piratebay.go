@@ -12,8 +12,8 @@ import (
 )
 
 func PirateBay(c *gin.Context) {
-	search := c.Query("search")
-	url := fmt.Sprint("https://thepiratebay.asia/s/?q=", strings.TrimSpace(search))
+	search := strings.ReplaceAll(strings.TrimSpace(c.Query("search")), " ", "%20")
+	url := fmt.Sprintf("https://piratebaylive.com/search?q=%s&cat%5B%5D=&search=Pirate+Search", search)
 	var netTransport = &http.Transport{
 		Dial: (&net.Dialer{
 			Timeout: 20 * time.Second,
@@ -27,7 +27,7 @@ func PirateBay(c *gin.Context) {
 	request, _ := http.NewRequest("GET", url, nil)
 	res, _ := client.Do(request)
 	doc, _ := goquery.NewDocumentFromReader(res.Body)
-	selector := doc.Find("tr")
+	selector := doc.Find("#st")
 	if selector.Length() > 0 {
 		infos := make([]TorrentInfo, 0)
 		selector.Each(func(i int, s *goquery.Selection) {
@@ -35,16 +35,14 @@ func PirateBay(c *gin.Context) {
 				return
 			}
 			tr := TorrentInfo{}
-			tr.Name = s.Find("td:nth-child(2) div a").Text()
-			tr.Seeders = s.Find("td:nth-child(3)").Text()
-			tr.Leechers = s.Find("td:nth-child(4)").Text()
-			file_info := s.Find("td:nth-child(2) font.detDesc").Text()
-			upload_date_temp := strings.Split(file_info, ",")
-			tr.Date = replace(replace(upload_date_temp[0], "Uploaded ", ""), " ", "-")
-			tr.Size = replace(upload_date_temp[1], " Size ", "")
-			tr.Uploader = replace(upload_date_temp[2], " ULed by ", "")
-			tr.Magnet = s.Find("td:nth-child(2) a:nth-child(2)").AttrOr("href", "")
-			tr.Url = s.Find("td:nth-child(2) div a").AttrOr("href", "")
+			tr.Name = s.Find("span.list-item.item-name.item-title").Text()
+			tr.Seeders = s.Find("span.list-item.item-seed").Text()
+			tr.Leechers = s.Find("span.list-item.item-leech").Text()
+			tr.Date = s.Find("span.list-item.item-uploaded").Text()
+			tr.Size = s.Find("span.list-item.item-size").Text()
+			tr.Uploader = s.Find("span.list-item.item-user").Text()
+			tr.Magnet = s.Find("span.item-icons a").AttrOr("href", "")
+			tr.Url = s.Find("span.list-item.item-name.item-title a").AttrOr("href", "")
 			tr.Website = "Pirate Bay"
 			infos = append(infos, tr)
 

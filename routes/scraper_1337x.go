@@ -12,8 +12,8 @@ import (
 )
 
 func Torr_1337x(c *gin.Context) {
-	search := c.Query("search")
-	url := fmt.Sprintf("https://1337x.to/search/%s/1/", strings.TrimSpace(search))
+	search := strings.ReplaceAll(strings.TrimSpace(c.Query("search")), " ", "%20")
+	url := fmt.Sprintf("https://1337x.to/search/%s/1/", search)
 	var netTransport = &http.Transport{
 		Dial: (&net.Dialer{
 			Timeout: 5 * time.Second,

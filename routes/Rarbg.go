@@ -9,7 +9,8 @@ import (
 )
 
 func Rarbg(c *gin.Context) {
-	search := strings.TrimSpace(c.Query("search"))
+
+	search := strings.ReplaceAll(strings.TrimSpace(c.Query("search")), " ", "%20")
 	api, err := New(search)
 	if err != nil {
 		log.Println(err)

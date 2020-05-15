@@ -12,8 +12,8 @@ import (
 )
 
 func Torrentgalaxy(c *gin.Context) {
-	search := c.Query("search")
-	url := fmt.Sprint("https://torrentgalaxy.to/torrents.php?search=", strings.TrimSpace(search))
+	search := strings.ReplaceAll(strings.TrimSpace(c.Query("search")), " ", "%20")
+	url := fmt.Sprint("https://torrentgalaxy.to/torrents.php?search=", search)
 	var netTransport = &http.Transport{
 		Dial: (&net.Dialer{
 			Timeout: 10 * time.Second,

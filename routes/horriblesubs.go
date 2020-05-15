@@ -12,8 +12,8 @@ import (
 )
 
 func Horriblesubs(c *gin.Context) {
-	search := c.Query("search")
-	url := fmt.Sprint("https://nyaa.si/user/HorribleSubs?f=0&c=0_0&q=", strings.TrimSpace(search))
+	search := strings.ReplaceAll(strings.TrimSpace(c.Query("search")), " ", "%20")
+	url := fmt.Sprint("https://nyaa.si/user/HorribleSubs?f=0&c=0_0&q=", search)
 	var netTransport = &http.Transport{
 		Dial: (&net.Dialer{
 			Timeout: 10 * time.Second,

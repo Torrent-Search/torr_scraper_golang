@@ -12,8 +12,8 @@ import (
 )
 
 func Skytorrents(c *gin.Context) {
-	search := c.Query("search")
-	url := fmt.Sprint("https://www.skytorrents.lol/?query=", strings.TrimSpace(search))
+	search := strings.ReplaceAll(strings.TrimSpace(c.Query("search")), " ", "%20")
+	url := fmt.Sprint("https://www.skytorrents.lol/?query=", search)
 	var netTransport = &http.Transport{
 		Dial: (&net.Dialer{
 			Timeout: 10 * time.Second,

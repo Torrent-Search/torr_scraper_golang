@@ -12,8 +12,8 @@ import (
 )
 
 func Limetorrents(c *gin.Context) {
-	search := c.Query("search")
-	url := fmt.Sprintf("https://www.limetorrents.info/search/all/%s/", strings.TrimSpace(search))
+	search := strings.ReplaceAll(strings.TrimSpace(c.Query("search")), " ", "%20")
+	url := fmt.Sprintf("https://www.limetorrents.info/search/all/%s/", search)
 
 	var netTransport = &http.Transport{
 		Dial: (&net.Dialer{
