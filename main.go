@@ -11,8 +11,7 @@ import (
 func main() {
 
 	listenPort := fmt.Sprintf(":%s", os.Getenv("PORT"))
-	router := gin.New()
-	router.Use(gin.Recovery())
+	router := gin.Default()
 	api := router.Group("api")
 	{
 		api.GET("/", routes.Ping)
