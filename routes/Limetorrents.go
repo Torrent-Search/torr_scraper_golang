@@ -43,7 +43,7 @@ func Limetorrents(c *gin.Context) {
 			tr.Date = strings.Split(s.Find("td:nth-child(2)").Text(), " - ")[0]
 			tr.Size = s.Find("td:nth-child(3)").Text()
 			tr.Uploader = "--"
-			tr.Magnet = gn_Lime_mg(s.Find("a.csprite_dl14").AttrOr("href", ""))
+			tr.Magnet = ""
 			tr.Url = "https://www.limetorrents.info" + s.Find("td.tdleft div.tt-name a:nth-child(2)").AttrOr("href", "")
 			tr.Website = "Limetorrents"
 			tr.TorrentFileUrl = ""

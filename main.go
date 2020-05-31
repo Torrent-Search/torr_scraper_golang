@@ -23,6 +23,7 @@ func main() {
 		api.GET("/kickass", routes.Kickass)
 		api.GET("/kickass_mg", routes.Kickass_getMagnet)
 		api.GET("/limetorrents", routes.Limetorrents)
+		api.GET("/limetorrents_mg", routes.Limetorrents_getMagnet)
 		api.GET("/thepiratebay", routes.PirateBay)
 		api.GET("/torrentdownloads", routes.Torrentdownloads)
 		api.GET("/tgx", routes.Torrentgalaxy)
