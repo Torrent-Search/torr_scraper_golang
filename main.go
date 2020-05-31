@@ -11,8 +11,8 @@ import (
 func main() {
 
 	listenPort := fmt.Sprintf(":%s", os.Getenv("PORT"))
-	print(listenPort)
-	router := gin.Default()
+	router := gin.New()
+	router.Use(gin.Recovery())
 	api := router.Group("api")
 	{
 		api.GET("/", routes.Ping)
@@ -24,14 +24,12 @@ func main() {
 		api.GET("/kickass", routes.Kickass)
 		api.GET("/kickass_mg", routes.Kickass_getMagnet)
 		api.GET("/limetorrents", routes.Limetorrents)
-		// api.GET("/limetorrents_mg", routes.Limetorrents_getMagnet)
 		api.GET("/thepiratebay", routes.PirateBay)
 		api.GET("/torrentdownloads", routes.Torrentdownloads)
-		// api.GET("/torrentdownloads_mg", routes.Torrrentdownload_getMagnet)
 		api.GET("/tgx", routes.Torrentgalaxy)
 		api.GET("/rarbg", routes.Rarbg)
-		// api.GET("/torrentdownloads_mg", routes.Torrrentdownload_getMagnet)
 		api.GET("/yts", routes.Yts)
+		api.GET("/eztv", routes.Eztv)
 	}
 	router.Run(listenPort)
 }
