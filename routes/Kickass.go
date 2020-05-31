@@ -60,7 +60,7 @@ func Kickass(c *gin.Context) {
 			tr.Uploader = strings.TrimPrefix(s.Find("td:nth-child(3)").Text(), "\n")
 			// Magnet
 			tr.Magnet = ""
-			tr.Url = s.Find(".cellMainLink").AttrOr("href", "")
+			tr.Url = "https://kickasstorrents.to" + s.Find(".cellMainLink").AttrOr("href", "")
 			tr.Website = "Kickass"
 			tr.TorrentFileUrl = ""
 			infos = append(infos, tr)
