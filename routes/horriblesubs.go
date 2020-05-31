@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
-	"strings"
+	"net/url"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
@@ -12,8 +12,9 @@ import (
 )
 
 func Horriblesubs(c *gin.Context) {
-	search := strings.ReplaceAll(strings.TrimSpace(c.Query("search")), " ", "%20")
-	url := fmt.Sprint("https://nyaa.si/user/HorribleSubs?f=0&c=0_0&q=", search)
+	param := url.Values{}
+	param.Add("q", c.Query("search"))
+	url := fmt.Sprintf("https://nyaa.si/user/HorribleSubs?f=0&c=0_0&%s", param.Encode())
 	var netTransport = &http.Transport{
 		Dial: (&net.Dialer{
 			Timeout: 10 * time.Second,

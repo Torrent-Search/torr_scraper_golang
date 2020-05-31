@@ -11,6 +11,7 @@ import (
 func main() {
 
 	listenPort := fmt.Sprintf(":%s", os.Getenv("PORT"))
+	print(listenPort)
 	router := gin.Default()
 	api := router.Group("api")
 	{
@@ -30,7 +31,7 @@ func main() {
 		api.GET("/tgx", routes.Torrentgalaxy)
 		api.GET("/rarbg", routes.Rarbg)
 		// api.GET("/torrentdownloads_mg", routes.Torrrentdownload_getMagnet)
-
+		api.GET("/yts", routes.Yts)
 	}
 	router.Run(listenPort)
 }

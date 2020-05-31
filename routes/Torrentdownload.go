@@ -2,6 +2,7 @@ package routes
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 
 	"github.com/mmcdole/gofeed"
@@ -10,8 +11,10 @@ import (
 )
 
 func Torrentdownloads(c *gin.Context) {
-	search := strings.ReplaceAll(strings.TrimSpace(c.Query("search")), " ", "%20")
-	url := fmt.Sprint("https://www.torrentdownload.info/feed?q=", search)
+	// search := strings.ReplaceAll(strings.TrimSpace(c.Query("search")), " ", "%20")
+	param := url.Values{}
+	param.Add("q", c.Query("search"))
+	url := fmt.Sprintf("https://www.torrentdownload.info/feed?%s", param.Encode())
 	fp := gofeed.NewParser()
 	feed, _ := fp.ParseURL(url)
 	items := feed.Items

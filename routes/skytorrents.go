@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
-	"strings"
+	"net/url"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
@@ -12,8 +12,10 @@ import (
 )
 
 func Skytorrents(c *gin.Context) {
-	search := strings.ReplaceAll(strings.TrimSpace(c.Query("search")), " ", "%20")
-	url := fmt.Sprint("https://www.skytorrents.lol/?query=", search)
+	// search := strings.ReplaceAll(strings.TrimSpace(c.Query("search")), " ", "%20")
+	param := url.Values{}
+	param.Add("query", c.Query("search"))
+	url := fmt.Sprint("https://www.skytorrents.lol/?", param.Encode())
 	var netTransport = &http.Transport{
 		Dial: (&net.Dialer{
 			Timeout: 10 * time.Second,

@@ -15,6 +15,7 @@ import (
 func Kickass(c *gin.Context) {
 	search := strings.ReplaceAll(strings.TrimSpace(c.Query("search")), " ", "%20")
 	url := fmt.Sprint("https://kickasstorrents.to/usearch/", search)
+	print(url)
 	log.Println(url)
 	var netTransport = &http.Transport{
 		Dial: (&net.Dialer{

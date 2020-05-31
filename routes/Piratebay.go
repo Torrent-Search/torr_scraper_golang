@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
-	"strings"
+	"net/url"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
@@ -12,8 +12,10 @@ import (
 )
 
 func PirateBay(c *gin.Context) {
-	search := strings.ReplaceAll(strings.TrimSpace(c.Query("search")), " ", "%20")
-	url := fmt.Sprintf("https://piratebaylive.com/search?q=%s&cat%5B%5D=&search=Pirate+Search", search)
+	// search := strings.ReplaceAll(strings.TrimSpace(c.Query("search")), " ", "%20")
+	param := url.Values{}
+	param.Add("q", c.Query("search"))
+	url := fmt.Sprintf("https://piratebaylive.com/search?%s&cat%5B%5D=&search=Pirate+Search", param.Encode())
 	var netTransport = &http.Transport{
 		Dial: (&net.Dialer{
 			Timeout: 20 * time.Second,
