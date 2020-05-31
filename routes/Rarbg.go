@@ -37,6 +37,7 @@ func Rarbg(c *gin.Context) {
 			"--",
 			obj.Download,
 			"Rarbg",
+			getRarbg_fileurl(obj.Download),
 		})
 	}
 	if len(infos) > 0 {

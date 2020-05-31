@@ -47,7 +47,7 @@ func Torr_1337x(c *gin.Context) {
 				"https://1337x.to" +
 					s.Find("td.coll-1.name > a:nth-child(2)").AttrOr("href", "")
 			tr.Website = "1337x"
-
+			tr.TorrentFileUrl = ""
 			infos = append(infos, tr)
 
 		})
@@ -77,9 +77,10 @@ func Torr_1337x_getMagnet(c *gin.Context) {
 	res, _ := client.Do(request)
 	doc, _ := goquery.NewDocumentFromReader(res.Body)
 	magnet, _ := doc.Find("div.clearfix ul li a").Attr("href")
+	torrentfile := doc.Find("div.clearfix ul li.dropdown ul li:nth-child(1) a").AttrOr("href", "")
 	if strings.HasPrefix(magnet, "magnet") {
 		defer res.Body.Close()
-		c.JSON(200, gin.H{"magnet": magnet})
+		c.JSON(200, gin.H{"magnet": magnet, "torrentFile": torrentfile})
 	} else {
 		defer res.Body.Close()
 		c.AbortWithStatus(204)

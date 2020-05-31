@@ -51,6 +51,7 @@ func Yts(c *gin.Context) {
 				tr.Website = "YTS"
 				tr.Size = torr_obj.Size
 				tr.Magnet = getYts_mg(torr_obj.Hash)
+				tr.TorrentFileUrl = getYts_fileurl(torr_obj.Hash)
 				infos = append(infos, tr)
 			}
 		}

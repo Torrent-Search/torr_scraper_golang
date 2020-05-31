@@ -46,6 +46,7 @@ func Limetorrents(c *gin.Context) {
 			tr.Magnet = gn_Lime_mg(s.Find("a.csprite_dl14").AttrOr("href", ""))
 			tr.Url = "https://www.limetorrents.info" + s.Find("td.tdleft div.tt-name a:nth-child(2)").AttrOr("href", "")
 			tr.Website = "Limetorrents"
+			tr.TorrentFileUrl = ""
 			infos = append(infos, tr)
 
 		})
@@ -76,11 +77,10 @@ func Limetorrents_getMagnet(c *gin.Context) {
 	res, _ := client.Do(request)
 	doc, _ := goquery.NewDocumentFromReader(res.Body)
 	magnet, _ := doc.Find("#content > div:nth-child(6) > div:nth-child(1) > div > div:nth-child(13) > div > p > a").Attr("href")
-
+	torrentfile := doc.Find("#content > div:nth-child(6) > div:nth-child(1) > div > div:nth-child(7) > div > p > a").AttrOr("href", "")
 	if strings.HasPrefix(magnet, "magnet") {
-		c.JSON(200, gin.H{"magnet": magnet})
+		c.JSON(200, gin.H{"magnet": magnet, "torrentFile": torrentfile})
 		defer res.Body.Close()
-
 	} else {
 		c.AbortWithStatus(204)
 		defer res.Body.Close()

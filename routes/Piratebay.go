@@ -46,6 +46,8 @@ func PirateBay(c *gin.Context) {
 			tr.Magnet = s.Find("span.item-icons a").AttrOr("href", "")
 			tr.Url = s.Find("span.list-item.item-name.item-title a").AttrOr("href", "")
 			tr.Website = "Pirate Bay"
+			tr.TorrentFileUrl = ""
+
 			infos = append(infos, tr)
 
 		})

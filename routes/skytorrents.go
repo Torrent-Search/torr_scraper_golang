@@ -44,21 +44,28 @@ func Skytorrents(c *gin.Context) {
 			magnet_selector_with_child := s.Find("td:nth-child(1)").Children()
 
 			if isMagnet(magnet_selector_with_child.Eq(3).AttrOr("href", "")) {
+				tr.TorrentFileUrl = magnet_selector_with_child.Eq(2).AttrOr("href", "")
 				tr.Magnet = magnet_selector_with_child.Eq(3).AttrOr("href", "")
 			} else if isMagnet(magnet_selector_with_child.Eq(4).AttrOr("href", "")) {
+				tr.TorrentFileUrl = magnet_selector_with_child.Eq(3).AttrOr("href", "")
 				tr.Magnet = magnet_selector_with_child.Eq(4).AttrOr("href", "")
 			} else if isMagnet(magnet_selector_with_child.Eq(5).AttrOr("href", "")) {
+				tr.TorrentFileUrl = magnet_selector_with_child.Eq(4).AttrOr("href", "")
 				tr.Magnet = magnet_selector_with_child.Eq(5).AttrOr("href", "")
 			} else if isMagnet(magnet_selector_with_child.Eq(6).AttrOr("href", "")) {
+				tr.TorrentFileUrl = magnet_selector_with_child.Eq(5).AttrOr("href", "")
 				tr.Magnet = magnet_selector_with_child.Eq(6).AttrOr("href", "")
 			} else if isMagnet(magnet_selector_with_child.Eq(7).AttrOr("href", "")) {
+				tr.TorrentFileUrl = magnet_selector_with_child.Eq(6).AttrOr("href", "")
 				tr.Magnet = magnet_selector_with_child.Eq(7).AttrOr("href", "")
 			} else if isMagnet(magnet_selector_with_child.Eq(8).AttrOr("href", "")) {
+				tr.TorrentFileUrl = magnet_selector_with_child.Eq(7).AttrOr("href", "")
 				tr.Magnet = magnet_selector_with_child.Eq(8).AttrOr("href", "")
 			}
 			tr.Url = "https://www.skytorrents.lol/" + s.Find("td:nth-child(1) a:nth-child(1)").AttrOr("href", "")
 			tr.Website = "Skytorrents"
 			tr.Uploader = "--"
+			tr.TorrentFileUrl = "https:" + tr.TorrentFileUrl
 			infos = append(infos, tr)
 
 		})

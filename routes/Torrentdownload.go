@@ -34,6 +34,7 @@ func Torrentdownloads(c *gin.Context) {
 			tr.Uploader = "--"
 			tr.Magnet = gn_TorrDwnd_mg(desc[9])
 			tr.Website = "Torrent Download"
+			tr.TorrentFileUrl = gn_TorrDwnd_fileurl(desc[9])
 			infos = append(infos, tr)
 		}
 		repo := TorrentRepo{infos}

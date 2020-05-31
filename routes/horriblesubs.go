@@ -42,7 +42,7 @@ func Horriblesubs(c *gin.Context) {
 			} else {
 				tr.Name = s.Find("td:nth-child(2) a").Text()
 			}
-
+			tr.Uploader = "Horrible Subs"
 			tr.Seeders = s.Find("td:nth-child(6)").Text()
 			tr.Leechers = s.Find("td:nth-child(7)").Text()
 			tr.Date = s.Find("td:nth-child(5)").Text()
@@ -50,6 +50,7 @@ func Horriblesubs(c *gin.Context) {
 			tr.Magnet = s.Find("td:nth-child(3) a:nth-child(2)").AttrOr("href", "")
 			tr.Url = "https://nyaa.si" + s.Find("td:nth-child(2) a").AttrOr("href", "")
 			tr.Website = "Horrible Subs"
+			tr.TorrentFileUrl = "https://nyaa.si" + s.Find("td:nth-child(3) a:nth-child(1)").AttrOr("href", "")
 			infos = append(infos, tr)
 
 		})

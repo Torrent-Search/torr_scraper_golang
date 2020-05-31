@@ -52,6 +52,8 @@ func Nyaa(c *gin.Context) {
 			tr.Url = "https://nyaa.si" + s.Find("td:nth-child(2) a").AttrOr("href", "")
 			tr.Website = "Nyaa"
 			tr.Uploader = "--"
+			tr.TorrentFileUrl = "https://nyaa.si" + s.Find("td:nth-child(3) a:nth-child(1)").AttrOr("href", "")
+
 			infos = append(infos, tr)
 
 		})

@@ -46,6 +46,8 @@ func Torrentgalaxy(c *gin.Context) {
 			tr.Magnet = s.Find("#click").Next().Find("a:nth-child(2)").AttrOr("href", "")
 			tr.Url = "https://torrentgalaxy.to" + s.Find("div:nth-child(4) a").AttrOr("href", "")
 			tr.Website = "Torrent Galaxy"
+			tr.TorrentFileUrl = s.Find("#click").Next().Find("a:nth-child(1)").AttrOr("href", "")
+
 			infos = append(infos, tr)
 
 		})
