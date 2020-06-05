@@ -34,7 +34,7 @@ func Rarbg(c *gin.Context) {
 			strconv.Itoa(obj.Leechers),
 			obj.PubDate,
 			ByteCountDecimal(obj.Size),
-			"--",
+			"N/A",
 			obj.Download,
 			"Rarbg",
 			getRarbg_fileurl(obj.Download),

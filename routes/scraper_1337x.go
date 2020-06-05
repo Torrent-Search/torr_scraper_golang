@@ -2,87 +2,73 @@ package routes
 
 import (
 	"fmt"
-	"net"
-	"net/http"
 	"strings"
-	"time"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
+	"github.com/gocolly/colly/v2"
 )
 
-func Torr_1337x(c *gin.Context) {
-	search := strings.ReplaceAll(strings.TrimSpace(c.Query("search")), " ", "%20")
+func Torr_1337x(ginCon *gin.Context) {
+	search := strings.ReplaceAll(strings.TrimSpace(ginCon.Query("search")), " ", "%20")
 	url := fmt.Sprintf("https://1337x.to/search/%s/1/", search)
-	var netTransport = &http.Transport{
-		Dial: (&net.Dialer{
-			Timeout: 5 * time.Second,
-		}).Dial,
-		TLSHandshakeTimeout: 5 * time.Second,
-	}
-	var client = &http.Client{
-		Timeout:   time.Second * 10,
-		Transport: netTransport,
-	}
-	request, _ := http.NewRequest("GET", url, nil)
-
-	res, _ := client.Do(request)
-	doc, _ := goquery.NewDocumentFromReader(res.Body)
-
-	selector := doc.Find("tr")
-	if selector.Length() > 0 {
-		infos := make([]TorrentInfo, 0)
-		selector.Each(func(i int, s *goquery.Selection) {
+	c := colly.NewCollector()
+	infos := make([]TorrentInfo, 0)
+	c.OnHTML("body", func(e *colly.HTMLElement) {
+		ti := TorrentInfo{}
+		if e.DOM.Find("tr").Length() == 0 {
+			return
+		}
+		e.ForEach("tr", func(i int, e *colly.HTMLElement) {
 			if i == 0 {
 				return
 			}
-			tr := TorrentInfo{}
-			tr.Name = s.Find("td.coll-1.name").Text()
-			tr.Seeders = s.Find("td.coll-2.seeds").Text()
-			tr.Leechers = s.Find("td.coll-3.leeches").Text()
-			tr.Date = s.Find("td.coll-date").Text()
-			tr.Size = s.Find("td:nth-child(5)").Clone().Children().Remove().End().Text()
-			tr.Uploader = s.Find("td:nth-child(6)").Text()
-			tr.Url =
+			ti.Name = e.ChildText("td.coll-1.name")
+			ti.Seeders = e.ChildText("td.coll-2.seeds")
+			ti.Leechers = e.ChildText("td.coll-3.leeches")
+			ti.Date = e.ChildText("td.coll-date")
+			ti.Size = e.DOM.Find("td:nth-child(5)").Clone().Children().Remove().End().Text()
+			ti.Uploader = e.ChildText("td:nth-child(6)")
+			ti.Url =
 				"https://1337x.to" +
-					s.Find("td.coll-1.name > a:nth-child(2)").AttrOr("href", "")
-			tr.Website = "1337x"
-			tr.TorrentFileUrl = ""
-			infos = append(infos, tr)
-
+					e.ChildAttr("td.coll-1.name > a:nth-child(2)", "href")
+			ti.Website = "1337x"
+			ti.TorrentFileUrl = ""
+			infos = append(infos, ti)
 		})
-		defer res.Body.Close()
-		repo := TorrentRepo{infos}
-		c.JSON(200, repo)
-
-	} else {
-		defer res.Body.Close()
-		c.AbortWithStatus(204)
-	}
+	})
+	c.OnError(func(r *colly.Response, err error) {
+		fmt.Println("Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
+	})
+	c.OnScraped(func(r *colly.Response) {
+		if len(infos) > 0 {
+			ginCon.JSON(200, TorrentRepo{infos})
+		} else {
+			ginCon.AbortWithStatus(204)
+		}
+	})
+	c.Visit(url)
 }
 
-func Torr_1337x_getMagnet(c *gin.Context) {
-	search_url := c.Query("url")
-	var netTransport = &http.Transport{
-		Dial: (&net.Dialer{
-			Timeout: 5 * time.Second,
-		}).Dial,
-		TLSHandshakeTimeout: 5 * time.Second,
-	}
-	var client = &http.Client{
-		Timeout:   time.Second * 10,
-		Transport: netTransport,
-	}
-	request, _ := http.NewRequest("GET", search_url, nil)
-	res, _ := client.Do(request)
-	doc, _ := goquery.NewDocumentFromReader(res.Body)
-	magnet, _ := doc.Find("div.clearfix ul li a").Attr("href")
-	torrentfile := doc.Find("div.clearfix ul li.dropdown ul li:nth-child(1) a").AttrOr("href", "")
-	if strings.HasPrefix(magnet, "magnet") {
-		defer res.Body.Close()
-		c.JSON(200, gin.H{"magnet": magnet, "torrentFile": torrentfile})
-	} else {
-		defer res.Body.Close()
-		c.AbortWithStatus(204)
-	}
+func Torr_1337x_getMagnet(ginCon *gin.Context) {
+	url := ginCon.Query("url")
+	c := colly.NewCollector()
+	var magnet, torrentfile string
+	c.OnHTML("body", func(e *colly.HTMLElement) {
+		magnet = e.ChildAttr("div.clearfix ul li a", "href")
+		torrentfile = e.ChildAttr("div.clearfix ul li.dropdown ul li:nth-child(1) a", "href")
+	})
+
+	c.OnError(func(r *colly.Response, err error) {
+		fmt.Println("Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
+	})
+
+	c.OnScraped(func(r *colly.Response) {
+		if strings.HasPrefix(magnet, "magnet") {
+			ginCon.JSON(200, gin.H{"magnet": magnet, "torrentFile": torrentfile})
+		} else {
+			ginCon.AbortWithStatus(204)
+		}
+	})
+	c.Visit(url)
+
 }

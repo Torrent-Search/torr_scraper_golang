@@ -8,6 +8,12 @@ import (
 	"strings"
 )
 
+func getBool(s string) bool {
+	if s == "true" {
+		return true
+	}
+	return false
+}
 func isMagnet(str string) bool {
 
 	// log.Println(str)
@@ -107,4 +113,15 @@ func getRarbg_fileurl(str string) string {
 	re := regexp.MustCompile(`(?i)[a-z0-9]{40}`)
 	match := re.FindString(str)
 	return fmt.Sprintf("https://itorrents.org/torrent/%s.torrent", match)
+}
+
+func GetImgUrl(str string) string {
+	if str == "" {
+		return ""
+	}
+	// print(str)
+	re := regexp.MustCompile(`(?i)<img[^>]+src="?([^"\s]+)"?\s*\/>`)
+	// match := re.FindString(str)
+	var imgTags = re.FindAllStringSubmatch(str, -1)
+	return imgTags[0][1]
 }

@@ -6,6 +6,15 @@ import (
 	"time"
 )
 
+type Recents struct {
+	Name       string `json:"name"`
+	Url        string `json:"torrent_url"`
+	ImgFileUrl string `json:"img_url"`
+	Imdb_code  string `json:"imdbcode"`
+}
+type RecentsRepo struct {
+	Data []Recents `json:"data"`
+}
 type TorrentInfo struct {
 	Name           string `json:"name"`
 	Url            string `json:"torrent_url"`

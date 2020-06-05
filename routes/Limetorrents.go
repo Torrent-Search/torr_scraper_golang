@@ -2,87 +2,68 @@ package routes
 
 import (
 	"fmt"
-	"net"
-	"net/http"
 	"strings"
-	"time"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
+	"github.com/gocolly/colly/v2"
 )
 
-func Limetorrents(c *gin.Context) {
-	search := strings.ReplaceAll(strings.TrimSpace(c.Query("search")), " ", "%20")
+func Limetorrents(ginCon *gin.Context) {
+	search := strings.ReplaceAll(strings.TrimSpace(ginCon.Query("search")), " ", "%20")
 	url := fmt.Sprintf("https://www.limetorrents.info/search/all/%s/", search)
-
-	var netTransport = &http.Transport{
-		Dial: (&net.Dialer{
-			Timeout: 10 * time.Second,
-		}).Dial,
-		TLSHandshakeTimeout: 5 * time.Second,
-	}
-	var client = &http.Client{
-		Timeout:   time.Second * 10,
-		Transport: netTransport,
-	}
-	request, _ := http.NewRequest("GET", url, nil)
-	res, _ := client.Do(request)
-	doc, _ := goquery.NewDocumentFromReader(res.Body)
-
-	selector := doc.Find("table.table2 tbody tr")
+	c := colly.NewCollector()
 	infos := make([]TorrentInfo, 0)
-	if selector.Length() > 1 {
-		selector.Each(func(i int, s *goquery.Selection) {
+	c.OnHTML("body", func(e *colly.HTMLElement) {
+		ti := TorrentInfo{}
+		e.ForEach("table.table2 tbody tr", func(i int, e *colly.HTMLElement) {
 			if i == 0 {
 				return
 			}
-			tr := TorrentInfo{}
-			tr.Name = s.Find("td:nth-child(1)").Text()
-			tr.Seeders = s.Find("td:nth-child(4)").Text()
-			tr.Leechers = s.Find("td:nth-child(5)").Text()
-			tr.Date = strings.Split(s.Find("td:nth-child(2)").Text(), " - ")[0]
-			tr.Size = s.Find("td:nth-child(3)").Text()
-			tr.Uploader = "--"
-			tr.Magnet = ""
-			tr.Url = "https://www.limetorrents.info" + s.Find("td.tdleft div.tt-name a:nth-child(2)").AttrOr("href", "")
-			tr.Website = "Limetorrents"
-			tr.TorrentFileUrl = ""
-			infos = append(infos, tr)
-
+			ti.Name = e.ChildText("td:nth-child(1)")
+			ti.Seeders = e.ChildText("td:nth-child(4)")
+			ti.Leechers = e.ChildText("td:nth-child(5)")
+			ti.Date = strings.Split(e.ChildText("td:nth-child(2)"), " - ")[0]
+			ti.Size = e.ChildText("td:nth-child(3)")
+			ti.Magnet = ""
+			ti.Url = "https://www.limetorrents.info" + e.ChildAttr("td.tdleft div.tt-name a:nth-child(2)", "href")
+			ti.Website = "Limetorrents"
+			ti.Uploader = "N/A"
+			ti.TorrentFileUrl = ""
+			infos = append(infos, ti)
 		})
-		repo := TorrentRepo{infos}
-		c.JSON(200, repo)
-		defer res.Body.Close()
-
-	} else {
-		c.AbortWithStatus(204)
-		defer res.Body.Close()
-	}
+	})
+	c.OnError(func(r *colly.Response, err error) {
+		fmt.Println("Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
+	})
+	c.OnScraped(func(r *colly.Response) {
+		if len(infos) > 0 {
+			ginCon.JSON(200, TorrentRepo{infos})
+		} else {
+			ginCon.AbortWithStatus(204)
+		}
+	})
+	c.Visit(url)
 }
 
-func Limetorrents_getMagnet(c *gin.Context) {
-	search_url := c.Query("url")
-	var netTransport = &http.Transport{
-		Dial: (&net.Dialer{
-			Timeout: 5 * time.Second,
-		}).Dial,
-		TLSHandshakeTimeout: 5 * time.Second,
-	}
-	var client = &http.Client{
-		Timeout:   time.Second * 10,
-		Transport: netTransport,
-	}
-	request, _ := http.NewRequest("GET", search_url, nil)
+func Limetorrents_getMagnet(ginCon *gin.Context) {
+	url := ginCon.Query("url")
+	c := colly.NewCollector()
+	var magnet, torrentfile string
+	c.OnHTML("body", func(e *colly.HTMLElement) {
+		magnet = e.ChildAttr("body > div > table:nth-child(6) > tbody > tr:nth-child(5) > td > span > a", "href")
+		torrentfile = e.ChildAttr("body > div > table:nth-child(6) > tbody > tr:nth-child(3) > td > span > a", "href")
+	})
 
-	res, _ := client.Do(request)
-	doc, _ := goquery.NewDocumentFromReader(res.Body)
-	magnet, _ := doc.Find("#content > div:nth-child(6) > div:nth-child(1) > div > div:nth-child(13) > div > p > a").Attr("href")
-	torrentfile := doc.Find("#content > div:nth-child(6) > div:nth-child(1) > div > div:nth-child(7) > div > p > a").AttrOr("href", "")
-	if strings.HasPrefix(magnet, "magnet") {
-		c.JSON(200, gin.H{"magnet": magnet, "torrentFile": torrentfile})
-		defer res.Body.Close()
-	} else {
-		c.AbortWithStatus(204)
-		defer res.Body.Close()
-	}
+	c.OnError(func(r *colly.Response, err error) {
+		fmt.Println("Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
+	})
+
+	c.OnScraped(func(r *colly.Response) {
+		if strings.HasPrefix(magnet, "magnet") {
+			ginCon.JSON(200, gin.H{"magnet": magnet, "torrentFile": torrentfile})
+		} else {
+			ginCon.AbortWithStatus(204)
+		}
+	})
+	c.Visit(url)
 }

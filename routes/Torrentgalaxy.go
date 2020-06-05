@@ -2,61 +2,49 @@ package routes
 
 import (
 	"fmt"
-	"net"
-	"net/http"
 	"net/url"
 	"strings"
-	"time"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
+	"github.com/gocolly/colly/v2"
 )
 
-func Torrentgalaxy(c *gin.Context) {
-	// search := strings.ReplaceAll(strings.TrimSpace(c.Query("search")), " ", "%20")
+func Torrentgalaxy(ginCon *gin.Context) {
+	// search := strings.ReplaceAll(strings.TrimSpace(ginCon.Query("search")), " ", "%20")
 	param := url.Values{}
-	param.Add("search", c.Query("search"))
+	param.Add("search", ginCon.Query("search"))
 	url := fmt.Sprintf("https://torrentgalaxy.to/torrents.php?%s", param.Encode())
-	print(url)
-	var netTransport = &http.Transport{
-		Dial: (&net.Dialer{
-			Timeout: 10 * time.Second,
-		}).Dial,
-		TLSHandshakeTimeout: 5 * time.Second,
-	}
-	var client = &http.Client{
-		Timeout:   time.Second * 10,
-		Transport: netTransport,
-	}
-	request, _ := http.NewRequest("GET", url, nil)
-	res, _ := client.Do(request)
-	doc, _ := goquery.NewDocumentFromReader(res.Body)
-
-	selector := doc.Find("div.tgxtablerow")
-	if selector.Length() > 0 {
-		infos := make([]TorrentInfo, 0)
-		selector.Each(func(i int, s *goquery.Selection) {
-			tr := TorrentInfo{}
-			tr.Name = s.Find("div:nth-child(4)").Text()
-			tr.Seeders = s.Find("div:nth-child(11) span font:nth-child(1)").Text()
-			tr.Leechers = s.Find("div:nth-child(11) span font:nth-child(2)").Text()
-			tr.Date = strings.Split(s.Find("div:nth-child(12)").Text(), " ")[0]
-			tr.Size = s.Find("div:nth-child(8)").Text()
-			tr.Uploader = s.Find("div:nth-child(7)").Text()
-			tr.Magnet = s.Find("#click").Next().Find("a:nth-child(2)").AttrOr("href", "")
-			tr.Url = "https://torrentgalaxy.to" + s.Find("div:nth-child(4) a").AttrOr("href", "")
-			tr.Website = "Torrent Galaxy"
-			tr.TorrentFileUrl = s.Find("#click").Next().Find("a:nth-child(1)").AttrOr("href", "")
-
-			infos = append(infos, tr)
-
+	c := colly.NewCollector()
+	infos := make([]TorrentInfo, 0)
+	c.OnHTML("body", func(e *colly.HTMLElement) {
+		ti := TorrentInfo{}
+		print(e.DOM.Find("div.tgxtablerow").Length())
+		if e.DOM.Find("div.tgxtablerow").Length() == 0 {
+			return
+		}
+		e.ForEach("div.tgxtablerow", func(i int, e *colly.HTMLElement) {
+			ti.Name = e.ChildText("div:nth-child(4)")
+			ti.Seeders = e.ChildText("div:nth-child(11) span font:nth-child(1)")
+			ti.Leechers = e.ChildText("div:nth-child(11) span font:nth-child(2)")
+			ti.Date = strings.Split(e.ChildText("div:nth-child(12)"), " ")[0]
+			ti.Size = e.ChildText("div:nth-child(8)")
+			ti.Uploader = e.ChildText("div:nth-child(7)")
+			ti.Magnet = e.DOM.Find("#click").Next().Find("a:nth-child(2)").AttrOr("href", "")
+			ti.Url = "https://torrentgalaxy.to" + e.ChildAttr("div:nth-child(4) a", "href")
+			ti.Website = "Torrent Galaxy"
+			ti.TorrentFileUrl = e.DOM.Find("#click").Next().Find("a:nth-child(1)").AttrOr("href", "")
+			infos = append(infos, ti)
 		})
-		defer res.Body.Close()
-		repo := TorrentRepo{infos}
-		c.JSON(200, repo)
-
-	} else {
-		defer res.Body.Close()
-		c.AbortWithStatus(204)
-	}
+	})
+	c.OnError(func(r *colly.Response, err error) {
+		fmt.Println("Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
+	})
+	c.OnScraped(func(r *colly.Response) {
+		if len(infos) > 0 {
+			ginCon.JSON(200, TorrentRepo{infos})
+		} else {
+			ginCon.AbortWithStatus(204)
+		}
+	})
+	c.Visit(url)
 }

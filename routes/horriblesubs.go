@@ -2,64 +2,50 @@ package routes
 
 import (
 	"fmt"
-	"net"
-	"net/http"
 	"net/url"
-	"time"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
+	"github.com/gocolly/colly/v2"
 )
 
-func Horriblesubs(c *gin.Context) {
+func Horriblesubs(ginCon *gin.Context) {
 	param := url.Values{}
-	param.Add("q", c.Query("search"))
+	param.Add("q", ginCon.Query("search"))
 	url := fmt.Sprintf("https://nyaa.si/user/HorribleSubs?f=0&c=0_0&%s", param.Encode())
-	var netTransport = &http.Transport{
-		Dial: (&net.Dialer{
-			Timeout: 10 * time.Second,
-		}).Dial,
-		TLSHandshakeTimeout: 5 * time.Second,
-	}
-	var client = &http.Client{
-		Timeout:   time.Second * 10,
-		Transport: netTransport,
-	}
-	request, _ := http.NewRequest("GET", url, nil)
-	res, _ := client.Do(request)
-	doc, _ := goquery.NewDocumentFromReader(res.Body)
-	selector := doc.Find("tr")
-
-	if selector.Length() > 0 {
-		infos := make([]TorrentInfo, 0)
-		selector.Each(func(i int, s *goquery.Selection) {
+	c := colly.NewCollector()
+	infos := make([]TorrentInfo, 0)
+	c.OnHTML("body", func(e *colly.HTMLElement) {
+		ti := TorrentInfo{}
+		e.ForEach("tr", func(i int, e *colly.HTMLElement) {
 			if i == 0 {
 				return
 			}
-			tr := TorrentInfo{}
-			if s.Find("td:nth-child(2) a").Length() == 2 {
-				tr.Name = s.Find("td:nth-child(2) a").Eq(1).Text()
+			if e.DOM.Find("td:nth-child(2) a").Length() == 2 {
+				ti.Name = e.DOM.Find("td:nth-child(2) a").Eq(1).Text()
 			} else {
-				tr.Name = s.Find("td:nth-child(2) a").Text()
+				ti.Name = e.ChildText("td:nth-child(2) a")
 			}
-			tr.Uploader = "Horrible Subs"
-			tr.Seeders = s.Find("td:nth-child(6)").Text()
-			tr.Leechers = s.Find("td:nth-child(7)").Text()
-			tr.Date = s.Find("td:nth-child(5)").Text()
-			tr.Size = s.Find("td:nth-child(4)").Text()
-			tr.Magnet = s.Find("td:nth-child(3) a:nth-child(2)").AttrOr("href", "")
-			tr.Url = "https://nyaa.si" + s.Find("td:nth-child(2) a").AttrOr("href", "")
-			tr.Website = "Horrible Subs"
-			tr.TorrentFileUrl = "https://nyaa.si" + s.Find("td:nth-child(3) a:nth-child(1)").AttrOr("href", "")
-			infos = append(infos, tr)
-
+			ti.Seeders = e.ChildText("td:nth-child(6)")
+			ti.Leechers = e.ChildText("td:nth-child(7)")
+			ti.Date = e.ChildText("td:nth-child(5)")
+			ti.Size = e.ChildText("td:nth-child(4)")
+			ti.Magnet = e.ChildAttr("td:nth-child(3) a:nth-child(2)", "href")
+			ti.Url = "https://nyaa.si" + e.ChildAttr("td:nth-child(2) a", "href")
+			ti.Website = "Nyaa"
+			ti.Uploader = "N/A"
+			ti.TorrentFileUrl = "https://nyaa.si" + e.ChildAttr("td:nth-child(3) a:nth-child(1)", "href")
+			infos = append(infos, ti)
 		})
-		defer res.Body.Close()
-		repo := TorrentRepo{infos}
-		c.JSON(200, repo)
-
-	} else {
-		defer res.Body.Close()
-		c.AbortWithStatus(204)
-	}
+	})
+	c.OnError(func(r *colly.Response, err error) {
+		fmt.Println("Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
+	})
+	c.OnScraped(func(r *colly.Response) {
+		if len(infos) > 0 {
+			ginCon.JSON(200, TorrentRepo{infos})
+		} else {
+			ginCon.AbortWithStatus(204)
+		}
+	})
+	c.Visit(url)
 }
