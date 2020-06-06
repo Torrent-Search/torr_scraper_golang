@@ -1,11 +1,15 @@
 package routes
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gocolly/colly/v2"
+	"github.com/scraper/helper"
 )
 
 func GetTrendingMovies(ginCon *gin.Context) {
@@ -69,4 +73,31 @@ func GetTrendingShows(ginCon *gin.Context) {
 		}
 	})
 	c.Visit(url)
+}
+
+func GetMovieDetail(ginCon *gin.Context) {
+	id := ginCon.Query("id")
+	_, err := os.Stat(id + ".json")
+	if os.IsNotExist(err) {
+		url := fmt.Sprintf("https://www.omdbapi.com/?i=%s&apikey=44d6212d", id)
+		res, _ := helper.GetResponse(url)
+		defer res.Body.Close()
+		body, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			panic(err.Error())
+		}
+		var data Imdb
+		json.Unmarshal(body, &data)
+		file, _ := json.MarshalIndent(data, "", " ")
+		_ = ioutil.WriteFile(id+".json", file, 0644)
+		ginCon.JSON(200, data)
+		print("fromserver")
+	} else {
+		file, _ := ioutil.ReadFile(id + ".json")
+		data := Imdb{}
+		_ = json.Unmarshal([]byte(file), &data)
+		print("fromfile")
+		ginCon.JSON(200, data)
+	}
+
 }

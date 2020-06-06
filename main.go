@@ -34,6 +34,7 @@ func main() {
 		api.GET("/rarbg", routes.Rarbg)
 		api.GET("/yts", routes.Yts)
 		api.GET("/eztv", routes.Eztv)
+		api.GET("/imdb", routes.GetMovieDetail)
 		// api.GET("/eztv_show", routes.GetShow)
 	}
 	router.Run(listenPort)
