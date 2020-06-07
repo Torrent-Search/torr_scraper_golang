@@ -12,12 +12,8 @@ func main() {
 
 	listenPort := fmt.Sprintf(":%s", os.Getenv("PORT"))
 	router := gin.Default()
-	// router.GET("/init", routes.InitEztv)
-	// router.Use(5)
 	api := router.Group("api")
 	{
-		api.GET("/tgxmov", routes.GetTrendingMovies)
-		api.GET("/tgxseries", routes.GetTrendingShows)
 		api.GET("/", routes.Ping)
 		api.GET("/skytorrents", routes.Skytorrents)
 		api.GET("/1337x", routes.Torr_1337x)
@@ -34,8 +30,7 @@ func main() {
 		api.GET("/rarbg", routes.Rarbg)
 		api.GET("/yts", routes.Yts)
 		api.GET("/eztv", routes.Eztv)
-		api.GET("/imdb", routes.GetMovieDetail)
-		// api.GET("/eztv_show", routes.GetShow)
+
 	}
 	router.Run(listenPort)
 }
