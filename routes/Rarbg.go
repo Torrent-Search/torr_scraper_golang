@@ -32,7 +32,7 @@ func Rarbg(c *gin.Context) {
 			"",
 			strconv.Itoa(obj.Seeders),
 			strconv.Itoa(obj.Leechers),
-			obj.PubDate,
+			strings.Split(obj.PubDate, " ")[0],
 			ByteCountDecimal(obj.Size),
 			"N/A",
 			obj.Download,

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -45,7 +46,7 @@ func Yts(c *gin.Context) {
 				tr.Name = obj.Title + " " + torr_obj.Quality
 				tr.Seeders = strconv.Itoa(torr_obj.Seeds)
 				tr.Leechers = strconv.Itoa(torr_obj.Peers)
-				tr.Date = torr_obj.DateUploaded
+				tr.Date = strings.Split(torr_obj.DateUploaded, " ")[0]
 				tr.Url = torr_obj.URL
 				tr.Uploader = "YTS"
 				tr.Website = "YTS"

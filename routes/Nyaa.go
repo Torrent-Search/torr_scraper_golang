@@ -3,6 +3,7 @@ package routes
 import (
 	"fmt"
 	"net/url"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gocolly/colly/v2"
@@ -27,7 +28,7 @@ func Nyaa(ginContext *gin.Context) {
 			}
 			ti.Seeders = e.ChildText("td:nth-child(6)")
 			ti.Leechers = e.ChildText("td:nth-child(7)")
-			ti.Date = e.ChildText("td:nth-child(5)")
+			ti.Date = strings.Split(e.ChildText("td:nth-child(5)"), " ")[0]
 			ti.Size = e.ChildText("td:nth-child(4)")
 			ti.Magnet = e.ChildAttr("td:nth-child(3) a:nth-child(2)", "href")
 			ti.Url = "https://nyaa.si" + e.ChildAttr("td:nth-child(2) a", "href")

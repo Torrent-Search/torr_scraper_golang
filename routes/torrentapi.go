@@ -19,10 +19,10 @@ const (
 	DefaultAPIURL = "https://torrentapi.org/pubapi_v2.php?"
 
 	// Defaulta.tokenExpiration is a default value for TokenExpiration option (TorrentAPI exprires after 15 min, but let's expire it after 890 seconds just to be safe.
-	DefaultTokenExpiration = time.Second * 890
+	DefaultTokenExpiration = time.Second * 2
 
 	// DefaultRequestDelay is a default delay between requests.
-	DefaultRequestDelay = time.Second * 2
+	DefaultRequestDelay = time.Second * 1
 
 	// DefaultMaxRetries is a default value for MaxRetries option.
 	DefaultMaxRetries = 5
