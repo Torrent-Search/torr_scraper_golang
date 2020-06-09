@@ -1,23 +1,25 @@
-package routes
+package controller
 
 import (
 	"fmt"
 	"net/url"
 	"strings"
 
-	"github.com/gin-gonic/gin"
-	"github.com/gocolly/colly/v2"
+	"github.com/gocolly/colly"
+	"github.com/gofiber/fiber"
+	models "github.com/scraper_v2/models"
 )
 
-func Torrentgalaxy(ginCon *gin.Context) {
-	// search := strings.ReplaceAll(strings.TrimSpace(ginCon.Query("search")), " ", "%20")
+func TorrentGalaxyController(fibCon *fiber.Ctx) {
 	param := url.Values{}
-	param.Add("search", ginCon.Query("search"))
+	param.Add("search", fibCon.Query("search"))
 	url := fmt.Sprintf("https://torrentgalaxy.to/torrents.php?%s", param.Encode())
 	c := colly.NewCollector()
-	infos := make([]TorrentInfo, 0)
+	var infos = make([]models.TorrentInfo, 0)
+	var repo models.TorrentRepo = models.TorrentRepo{}
+	var ti models.TorrentInfo = models.TorrentInfo{}
 	c.OnHTML("body", func(e *colly.HTMLElement) {
-		ti := TorrentInfo{}
+
 		print(e.DOM.Find("div.tgxtablerow").Length())
 		if e.DOM.Find("div.tgxtablerow").Length() == 0 {
 			return
@@ -41,9 +43,10 @@ func Torrentgalaxy(ginCon *gin.Context) {
 	})
 	c.OnScraped(func(r *colly.Response) {
 		if len(infos) > 0 {
-			ginCon.JSON(200, TorrentRepo{infos})
+			repo.Data = &infos
+			fibCon.Status(200).JSON(repo)
 		} else {
-			ginCon.AbortWithStatus(204)
+			fibCon.Status(204)
 		}
 	})
 	c.Visit(url)

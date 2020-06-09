@@ -1,46 +1,35 @@
-package routes
+package controller
 
 import (
 	"encoding/json"
 	"fmt"
-	"net"
-	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
-	"time"
 
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber"
+	"github.com/scraper_v2/helper"
+	models "github.com/scraper_v2/models"
 )
 
-func Yts(c *gin.Context) {
+func YtsController(fibCon *fiber.Ctx) {
 	param := url.Values{}
-	param.Add("query_term", c.Query("search"))
+	param.Add("query_term", fibCon.Query("search"))
 	url := fmt.Sprintf("https://yts.mx/api/v2/list_movies.json?%s", param.Encode())
-	var netTransport = &http.Transport{
-		Dial: (&net.Dialer{
-			Timeout: 20 * time.Second,
-		}).Dial,
-		TLSHandshakeTimeout: 10 * time.Second,
-	}
-	var client = &http.Client{
-		Timeout:   time.Second * 20,
-		Transport: netTransport,
-	}
-	request, _ := http.NewRequest("GET", url, nil)
-	res, _ := client.Do(request)
+	res, _ := helper.GetResponse(url)
 
-	var data Result
+	var data models.Result
 	err := json.NewDecoder(res.Body).Decode(&data)
 	if err != nil {
 		defer res.Body.Close()
-		c.AbortWithStatus(500)
+		fibCon.Status(500)
 	}
-	infos := make([]TorrentInfo, 0)
+	var infos = make([]models.TorrentInfo, 0)
+	var repo models.TorrentRepo = models.TorrentRepo{}
+	var tr models.TorrentInfo = models.TorrentInfo{}
 
 	movies := data.Data.Movies
 	if data.Data.MovieCount > 0 {
-		tr := TorrentInfo{}
 		for _, obj := range movies {
 			for _, torr_obj := range obj.Torrents {
 				tr.Name = obj.Title + " " + torr_obj.Quality
@@ -51,15 +40,16 @@ func Yts(c *gin.Context) {
 				tr.Uploader = "YTS"
 				tr.Website = "YTS"
 				tr.Size = torr_obj.Size
-				tr.Magnet = getYts_mg(torr_obj.Hash)
-				tr.TorrentFileUrl = getYts_fileurl(torr_obj.Hash)
+				tr.Magnet = helper.GenerateYtsMagnet(torr_obj.Hash)
+				tr.TorrentFileUrl = ""
 				infos = append(infos, tr)
 			}
 		}
 		defer res.Body.Close()
-		c.JSON(200, TorrentRepo{infos})
+		repo.Data = &infos
+		fibCon.Status(200).JSON(repo)
 	} else {
 		defer res.Body.Close()
-		c.AbortWithStatus(204)
+		fibCon.Status(204)
 	}
 }

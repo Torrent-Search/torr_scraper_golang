@@ -1,22 +1,23 @@
-package routes
+package controller
 
 import (
 	"fmt"
 	"net/url"
 
-	"github.com/gin-gonic/gin"
-	"github.com/gocolly/colly/v2"
+	"github.com/gocolly/colly"
+	"github.com/gofiber/fiber"
+	models "github.com/scraper_v2/models"
 )
 
-func PirateBay(ginCon *gin.Context) {
-	// search := strings.ReplaceAll(strings.TrimSpace(ginCon.Query("search")), " ", "%20")
+func PirateBayController(fibCon *fiber.Ctx) {
 	param := url.Values{}
-	param.Add("q", ginCon.Query("search"))
+	param.Add("q", fibCon.Query("search"))
 	url := fmt.Sprintf("https://piratebaylive.com/search?%s&cat%5B%5D=&search=Pirate+Search", param.Encode())
 	c := colly.NewCollector()
-	infos := make([]TorrentInfo, 0)
+	var infos = make([]models.TorrentInfo, 0)
+	var repo models.TorrentRepo = models.TorrentRepo{}
+	var ti models.TorrentInfo = models.TorrentInfo{}
 	c.OnHTML("body", func(e *colly.HTMLElement) {
-		ti := TorrentInfo{}
 		selector := e.DOM.Find("#st")
 		if selector.Length() > 1 {
 			e.ForEach("#st", func(i int, e *colly.HTMLElement) {
@@ -39,9 +40,10 @@ func PirateBay(ginCon *gin.Context) {
 	})
 	c.OnScraped(func(r *colly.Response) {
 		if len(infos) > 0 {
-			ginCon.JSON(200, TorrentRepo{infos})
+			repo.Data = &infos
+			fibCon.Status(200).JSON(repo)
 		} else {
-			ginCon.AbortWithStatus(204)
+			fibCon.Status(204)
 		}
 	})
 	c.Visit(url)

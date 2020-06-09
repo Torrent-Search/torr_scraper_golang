@@ -1,41 +1,42 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
-	"github.com/gin-gonic/gin"
-	"github.com/scraper/routes"
+	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/middleware"
+
+	controller "github.com/scraper_v2/controllers"
 )
 
 func main() {
+	app := fiber.New()
 
-	listenPort := fmt.Sprintf(":%s", os.Getenv("PORT"))
-	router := gin.Default()
-	// router.GET("/init", routes.InitEztv)
-	// router.Use(5)
-	api := router.Group("api")
-	{
-		api.GET("/tgxmov", routes.GetTrendingMovies)
-		api.GET("/tgxseries", routes.GetTrendingShows)
-		api.GET("/", routes.Ping)
-		api.GET("/skytorrents", routes.Skytorrents)
-		api.GET("/1337x", routes.Torr_1337x)
-		api.GET("/1337x_mg", routes.Torr_1337x_getMagnet)
-		api.GET("/horriblesubs", routes.Horriblesubs)
-		api.GET("/nyaa", routes.Nyaa)
-		api.GET("/kickass", routes.Kickass)
-		api.GET("/kickass_mg", routes.Kickass_getMagnet)
-		api.GET("/limetorrents", routes.Limetorrents)
-		api.GET("/limetorrents_mg", routes.Limetorrents_getMagnet)
-		api.GET("/thepiratebay", routes.PirateBay)
-		api.GET("/torrentdownloads", routes.Torrentdownloads)
-		api.GET("/tgx", routes.Torrentgalaxy)
-		api.GET("/rarbg", routes.Rarbg)
-		api.GET("/yts", routes.Yts)
-		api.GET("/eztv", routes.Eztv)
-		api.GET("/imdb", routes.GetMovieDetail)
-		// api.GET("/eztv_show", routes.GetShow)
-	}
-	router.Run(listenPort)
+	app.Use(middleware.Recover())
+	app.Use(middleware.Logger())
+
+	grp := app.Group("api")
+	grp.Get("/1337x", controller.Controller1337x)
+	grp.Get("/1337x_mg", controller.Controller1337xMg)
+	grp.Get("/eztv", controller.EztvController)
+	grp.Get("/horriblesubs", controller.HorriblesubsController)
+	grp.Get("/nyaa", controller.NyaaController)
+	grp.Get("/kickass", controller.KickassController)
+	grp.Get("/kickass_mg", controller.KickassMgController)
+	grp.Get("/limetorrents", controller.LimetorrentsController)
+	grp.Get("/limetorrents_mg", controller.LimetorrentsMgController)
+	grp.Get("/thepiratebay", controller.PirateBayController)
+	grp.Get("/skytorrents", controller.SkytorrentsController)
+	grp.Get("/torrentdownloads", controller.TorrentdownloadsController)
+	grp.Get("/tgx", controller.TorrentGalaxyController)
+	grp.Get("/yts", controller.YtsController)
+	grp.Get("/tgxmov", controller.RecentMoviesController)
+	grp.Get("/tgxseries", controller.RecentShowsController)
+	grp.Get("/imdb", controller.ImdbController)
+	grp.Get("/rarbg", func(c *fiber.Ctx) { c.Status(204) })
+	port := os.Getenv("PORT")
+	app.Settings.CaseSensitive = true
+	app.Settings.StrictRouting = true
+	app.Listen(":" + port)
+
 }

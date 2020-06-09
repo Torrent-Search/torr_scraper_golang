@@ -1,25 +1,27 @@
-package routes
+package controller
 
 import (
 	"fmt"
 	"net/url"
 	"strings"
 
+	"github.com/gofiber/fiber"
 	"github.com/mmcdole/gofeed"
-
-	"github.com/gin-gonic/gin"
+	helper "github.com/scraper_v2/helper"
+	models "github.com/scraper_v2/models"
 )
 
-func Torrentdownloads(c *gin.Context) {
+func TorrentdownloadsController(fibCon *fiber.Ctx) {
 	param := url.Values{}
-	param.Add("q", c.Query("search"))
+	param.Add("q", fibCon.Query("search"))
 	url := fmt.Sprintf("https://www.torrentdownload.info/feed?%s", param.Encode())
 	fp := gofeed.NewParser()
 	feed, _ := fp.ParseURL(url)
 	items := feed.Items
+	var infos = make([]models.TorrentInfo, 0)
+	var repo models.TorrentRepo = models.TorrentRepo{}
+	var tr models.TorrentInfo = models.TorrentInfo{}
 	if len(items) > 0 {
-		infos := make([]TorrentInfo, 0)
-		tr := TorrentInfo{}
 		for _, obj := range items {
 			desc := strings.Split(obj.Description, " ")
 
@@ -30,14 +32,14 @@ func Torrentdownloads(c *gin.Context) {
 			tr.Seeders = desc[4]
 			tr.Leechers = desc[7]
 			tr.Uploader = "N/A"
-			tr.Magnet = gn_TorrDwnd_mg(desc[9])
+			tr.Magnet = helper.GenerateTorrentDownloadMagnet(desc[9])
 			tr.Website = "Torrent Download"
-			tr.TorrentFileUrl = gn_TorrDwnd_fileurl(desc[9])
+			tr.TorrentFileUrl = ""
 			infos = append(infos, tr)
 		}
-		repo := TorrentRepo{infos}
-		c.JSON(200, &repo)
+		repo.Data = &infos
+		fibCon.Status(200).JSON(repo)
 	} else {
-		c.AbortWithStatus(204)
+		fibCon.Status(204)
 	}
 }

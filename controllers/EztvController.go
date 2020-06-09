@@ -1,19 +1,21 @@
-package routes
+package controller
 
 import (
 	"fmt"
 	"net/url"
 
-	"github.com/gin-gonic/gin"
-	"github.com/gocolly/colly/v2"
+	"github.com/gocolly/colly"
+	"github.com/gofiber/fiber"
+	models "github.com/scraper_v2/models"
 )
 
-func Eztv(ginCon *gin.Context) {
-	url := fmt.Sprintf("https://eztv.io/search/%s", url.PathEscape(ginCon.Query("search")))
+func EztvController(fibCon *fiber.Ctx) {
+	url := fmt.Sprintf("https://eztv.io/search/%s", url.PathEscape(fibCon.Query("search")))
 	c := colly.NewCollector()
-	infos := make([]TorrentInfo, 0)
+	var infos = make([]models.TorrentInfo, 0)
+	var repo models.TorrentRepo = models.TorrentRepo{}
+	var ti models.TorrentInfo = models.TorrentInfo{}
 	c.OnHTML("body", func(e *colly.HTMLElement) {
-		ti := TorrentInfo{}
 		e.ForEach("tr.forum_header_border", func(i int, e *colly.HTMLElement) {
 
 			ti.Name = e.ChildText("td:nth-child(2)")
@@ -34,10 +36,12 @@ func Eztv(ginCon *gin.Context) {
 	})
 	c.OnScraped(func(r *colly.Response) {
 		if len(infos) > 0 {
-			ginCon.JSON(200, TorrentRepo{infos})
+			repo.Data = &infos
+			fibCon.Status(200).JSON(repo)
 		} else {
-			ginCon.AbortWithStatus(204)
+			fibCon.Status(204)
 		}
 	})
 	c.Visit(url)
+
 }

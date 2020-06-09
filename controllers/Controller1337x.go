@@ -1,20 +1,24 @@
-package routes
+package controller
 
 import (
 	"fmt"
 	"strings"
 
-	"github.com/gin-gonic/gin"
-	"github.com/gocolly/colly/v2"
+	"github.com/gocolly/colly"
+	"github.com/gofiber/fiber"
+	models "github.com/scraper_v2/models"
 )
 
-func Torr_1337x(ginCon *gin.Context) {
-	search := strings.ReplaceAll(strings.TrimSpace(ginCon.Query("search")), " ", "%20")
+func Controller1337x(fibCon *fiber.Ctx) {
+
+	search := fibCon.Query("search")
 	url := fmt.Sprintf("https://1337x.to/search/%s/1/", search)
 	c := colly.NewCollector()
-	infos := make([]TorrentInfo, 0)
+	var infos = make([]models.TorrentInfo, 0)
+	var repo models.TorrentRepo = models.TorrentRepo{}
+	var ti models.TorrentInfo = models.TorrentInfo{}
+
 	c.OnHTML("body", func(e *colly.HTMLElement) {
-		ti := TorrentInfo{}
 		if e.DOM.Find("tr").Length() == 0 {
 			return
 		}
@@ -41,18 +45,20 @@ func Torr_1337x(ginCon *gin.Context) {
 	})
 	c.OnScraped(func(r *colly.Response) {
 		if len(infos) > 0 {
-			ginCon.JSON(200, TorrentRepo{infos})
+			repo.Data = &infos
+			fibCon.Status(200).JSON(repo)
 		} else {
-			ginCon.AbortWithStatus(204)
+			fibCon.Status(204)
 		}
 	})
 	c.Visit(url)
 }
 
-func Torr_1337x_getMagnet(ginCon *gin.Context) {
-	url := ginCon.Query("url")
-	c := colly.NewCollector()
+func Controller1337xMg(fibCon *fiber.Ctx) {
+	url := fibCon.Query("url")
 	var magnet, torrentfile string
+	c := colly.NewCollector()
+
 	c.OnHTML("body", func(e *colly.HTMLElement) {
 		magnet = e.ChildAttr("div.clearfix ul li a", "href")
 		torrentfile = e.ChildAttr("div.clearfix ul li.dropdown ul li:nth-child(1) a", "href")
@@ -64,11 +70,10 @@ func Torr_1337x_getMagnet(ginCon *gin.Context) {
 
 	c.OnScraped(func(r *colly.Response) {
 		if strings.HasPrefix(magnet, "magnet") {
-			ginCon.JSON(200, gin.H{"magnet": magnet, "torrentFile": torrentfile})
+			fibCon.Status(200).JSON(fiber.Map{"magnet": magnet, "torrentFile": torrentfile})
 		} else {
-			ginCon.AbortWithStatus(204)
+			fibCon.Status(204)
 		}
 	})
 	c.Visit(url)
-
 }
