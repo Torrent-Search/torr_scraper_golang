@@ -25,9 +25,15 @@ func ImdbController(fibCon *fiber.Ctx) {
 		}
 		var data models.Imdb
 		json.Unmarshal(body, &data)
-		file, _ := json.MarshalIndent(data, "", " ")
-		_ = ioutil.WriteFile(id+".json", file, 0644)
-		fibCon.Status(200).JSON(data)
+		print(data.Response)
+		if data.Response == "False" {
+			fibCon.Status(204)
+		} else {
+			file, _ := json.MarshalIndent(data, "", " ")
+			_ = ioutil.WriteFile(id+".json", file, 0644)
+			fibCon.Status(200).JSON(data)
+		}
+
 	} else {
 		file, _ := ioutil.ReadFile(id + ".json")
 		data := models.Imdb{}
