@@ -18,9 +18,8 @@ func RecentMoviesController(fibCon *fiber.Ctx) {
 	var re models.Recents = models.Recents{}
 	var listType string = fibCon.Query("list")
 	var imdbCodes []string = make([]string, 0)
-	c.OnHTML(".panel-body.slidingDivf-6e422c70dd796e04eec79baaea3d169e3f1c5cd1", func(e *colly.HTMLElement) {
-		// div:nth-child(3)
-		e.ForEach("div:nth-child(3) .panel-body.slidingDivb-b6a23717a851a6fc9b4c2e09f0073f0857d7f4d8 div:nth-child(2) .tgxtable div.tgxtablerow", func(i int, a *colly.HTMLElement) {
+	c.OnHTML("body", func(e *colly.HTMLElement) {
+		e.ForEach(".panel-body.slidingDivb-b6a23717a851a6fc9b4c2e09f0073f0857d7f4d8 div.tgxtablerow", func(i int, a *colly.HTMLElement) {
 			re.Name = a.ChildText("div:nth-child(1) a b")
 			re.Url = "https://torrentgalaxy.to" + a.ChildAttr("#click div a:nth-child(2)", "href")
 			if len(strings.Split(re.Url, "=")) == 1 {
