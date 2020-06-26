@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/gocolly/colly"
+	"github.com/gocolly/colly/v2"
 	"github.com/gofiber/fiber"
 	models "github.com/scraper_v2/models"
 )
@@ -18,7 +18,7 @@ func LimetorrentsController(fibCon *fiber.Ctx) {
 	var repo models.TorrentRepo = models.TorrentRepo{}
 	var ti models.TorrentInfo = models.TorrentInfo{}
 	c.OnHTML("body", func(e *colly.HTMLElement) {
-		
+
 		e.ForEach("table.table2 tbody tr", func(i int, e *colly.HTMLElement) {
 			if i == 0 {
 				return
