@@ -3,7 +3,6 @@ package controller
 import (
 	"fmt"
 	"net/url"
-	"os"
 	"strings"
 
 	"github.com/gocolly/colly/v2"
@@ -19,7 +18,6 @@ func ZooqleController(fibCon *fiber.Ctx) {
 	var repo models.TorrentRepo = models.TorrentRepo{}
 	var ti models.TorrentInfo = models.TorrentInfo{}
 	var c *colly.Collector = colly.NewCollector(colly.UserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"))
-	c.SetProxy(os.Getenv("PROXY"))
 	var seedLeechString string = ""
 	c.OnHTML("body", func(e *colly.HTMLElement) {
 		e.ForEach("tr", func(i int, e *colly.HTMLElement) {
