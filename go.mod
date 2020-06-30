@@ -3,7 +3,6 @@ module github.com/scraper_v2
 go 1.14
 
 require (
-	github.com/PuerkitoBio/goquery v1.5.1
 	github.com/gocolly/colly/v2 v2.1.0
 	github.com/gofiber/fiber v1.12.0
 	github.com/klauspost/compress v1.10.10 // indirect
