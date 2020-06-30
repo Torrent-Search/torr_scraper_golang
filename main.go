@@ -36,6 +36,10 @@ func main() {
 	grp.Get("/rarbg", func(c *fiber.Ctx) { c.Status(204) })
 	grp.Get("/appversion", controller.AppUpdateController)
 	grp.Get("/zooqle", controller.ZooqleController)
+	grp.Get("/zooqlemediasearch", controller.ZooqleMediaSearchController)
+	grp.Get("/zooqleseries", controller.ZooqleSeriesController)
+	grp.Get("/zooqleepdata", controller.ZooqleEpisodeController)
+
 	port := os.Getenv("PORT")
 	app.Settings.CaseSensitive = true
 	app.Settings.StrictRouting = true
