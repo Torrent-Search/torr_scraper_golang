@@ -22,13 +22,14 @@ type SongItemMoreInfo struct {
 }
 
 type SongsDataWithLink struct {
-	ID       string `json:"id"`
-	Title    string `json:"song"`
-	Image    string `json:"image"`
-	Album    string `json:"album"`
-	AlbumID  string `json:"albumid"`
-	URL      string `json:"encrypted_media_url"`
-	Year     string `json:"year"`
-	Duration string `json:"duration"`
-	Singers  string `json:"singers"`
+	ID        string `json:"id"`
+	Title     string `json:"song"`
+	Image     string `json:"image"`
+	Album     string `json:"album"`
+	AlbumID   string `json:"albumid"`
+	URL       string `json:"encrypted_media_url"`
+	Year      string `json:"year"`
+	Duration  string `json:"duration"`
+	Singers   string `json:"singers"`
+	Is320kbps string `json:"320kbps"`
 }
