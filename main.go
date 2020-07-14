@@ -36,6 +36,7 @@ func main() {
 	grp.Get("/rarbg", func(c *fiber.Ctx) { c.Status(204) })
 	grp.Get("/appversion", controller.AppUpdateController)
 	grp.Get("/zooqle", controller.ZooqleController)
+	grp.Get("/recent", controller.RecentController)
 	grp.Get("/jiosaavnraw", controller.JioSaavnRawController)
 	grp.Get("/jiosaavnsong", controller.JioSaavnSongController)
 	grp.Get("/jiosaavnalbum", controller.JioSaavnAlbumController)
