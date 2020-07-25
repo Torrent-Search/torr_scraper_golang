@@ -11,12 +11,21 @@ import (
 )
 
 func KickassController(fibCon *fiber.Ctx) {
-	search := url.PathEscape(fibCon.Query("search"))
-	url := fmt.Sprint("https://kickasstorrents.to/usearch/", search)
-	c := colly.NewCollector()
-	var infos = make([]models.TorrentInfo, 0)
-	var repo models.TorrentRepo = models.TorrentRepo{}
-	var ti models.TorrentInfo = models.TorrentInfo{}
+	var (
+		search    string = fibCon.Query("search")
+		searchUrl string
+		pageNo    string             = fibCon.Query("page")
+		c         *colly.Collector   = colly.NewCollector()
+		infos                        = make([]models.TorrentInfo, 0)
+		repo      models.TorrentRepo = models.TorrentRepo{}
+		ti        models.TorrentInfo = models.TorrentInfo{}
+	)
+	search = url.PathEscape(search)
+	if pageNo == "" {
+		pageNo = "1"
+	}
+	searchUrl = fmt.Sprintf("https://kickasstorrents.to/usearch/%s/%s/", search, pageNo)
+
 	c.OnHTML("body", func(e *colly.HTMLElement) {
 
 		if e.DOM.Find("span[itemprop=name]").Length() == 0 {
@@ -46,7 +55,7 @@ func KickassController(fibCon *fiber.Ctx) {
 			fibCon.Status(204)
 		}
 	})
-	c.Visit(url)
+	c.Visit(searchUrl)
 }
 func KickassMgController(fibCon *fiber.Ctx) {
 	url := fibCon.Query("url")

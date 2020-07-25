@@ -11,12 +11,21 @@ import (
 )
 
 func LimetorrentsController(fibCon *fiber.Ctx) {
-	search := url.PathEscape(fibCon.Query("search"))
-	url := fmt.Sprintf("https://www.limetorrents.info/search/all/%s/", search)
-	c := colly.NewCollector()
-	var infos = make([]models.TorrentInfo, 0)
-	var repo models.TorrentRepo = models.TorrentRepo{}
-	var ti models.TorrentInfo = models.TorrentInfo{}
+	var (
+		search    string = fibCon.Query("search")
+		searchUrl string
+		pageNo    string             = fibCon.Query("page")
+		c         *colly.Collector   = colly.NewCollector()
+		infos                        = make([]models.TorrentInfo, 0)
+		repo      models.TorrentRepo = models.TorrentRepo{}
+		ti        models.TorrentInfo = models.TorrentInfo{}
+	)
+	search = url.PathEscape(search)
+	if pageNo == "" {
+		pageNo = "1"
+	}
+	searchUrl = fmt.Sprintf("https://www.limetorrents.info/search/all/%s/%s/", search, pageNo)
+
 	c.OnHTML("body", func(e *colly.HTMLElement) {
 
 		e.ForEach("table.table2 tbody tr", func(i int, e *colly.HTMLElement) {
@@ -47,7 +56,7 @@ func LimetorrentsController(fibCon *fiber.Ctx) {
 			fibCon.Status(200)
 		}
 	})
-	c.Visit(url)
+	c.Visit(searchUrl)
 
 }
 func LimetorrentsMgController(fibCon *fiber.Ctx) {

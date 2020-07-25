@@ -13,6 +13,11 @@ import (
 func NyaaController(fibCon *fiber.Ctx) {
 	param := url.Values{}
 	param.Add("q", fibCon.Query("search"))
+	if fibCon.Query("page") == "" {
+		param.Add("p", "1")
+	} else {
+		param.Add("p", fibCon.Query("page"))
+	}
 	url := fmt.Sprintf("https://nyaa.si/?%s", param.Encode())
 	c := colly.NewCollector()
 	var infos = make([]models.TorrentInfo, 0)

@@ -13,7 +13,12 @@ import (
 func TorrentGalaxyController(fibCon *fiber.Ctx) {
 	param := url.Values{}
 	param.Add("search", fibCon.Query("search"))
-	url := fmt.Sprintf("https://torrentgalaxy.to/torrents.php?%s", param.Encode())
+	if fibCon.Query("page") == "" {
+		param.Add("page", "0")
+	} else {
+		param.Add("page", fibCon.Query("page"))
+	}
+	url := fmt.Sprintf("https://torrentgalaxy.to/torrents.php?parent_cat=&sort=id&order=desc&%s", param.Encode())
 	c := colly.NewCollector()
 	var infos = make([]models.TorrentInfo, 0)
 	var repo models.TorrentRepo = models.TorrentRepo{}

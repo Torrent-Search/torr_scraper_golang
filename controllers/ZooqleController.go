@@ -13,6 +13,11 @@ import (
 func ZooqleController(fibCon *fiber.Ctx) {
 	param := url.Values{}
 	param.Add("q", fibCon.Query("search"))
+	if fibCon.Query("page") == "" {
+		param.Add("pg", "1")
+	} else {
+		param.Add("pg", fibCon.Query("page"))
+	}
 	var url string = fmt.Sprintf("https://zooqle.unblockit.id/search?%s", param.Encode())
 	var infos = make([]models.TorrentInfo, 0)
 	var repo models.TorrentRepo = models.TorrentRepo{}

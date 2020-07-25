@@ -11,12 +11,22 @@ import (
 
 func Controller1337x(fibCon *fiber.Ctx) {
 
-	search := fibCon.Query("search")
-	url := fmt.Sprintf("https://1337x.to/search/%s/1/", search)
-	c := colly.NewCollector()
-	var infos = make([]models.TorrentInfo, 0)
-	var repo models.TorrentRepo = models.TorrentRepo{}
-	var ti models.TorrentInfo = models.TorrentInfo{}
+	var (
+		search string = fibCon.Query("search")
+		page   string = fibCon.Query("page")
+		url    string
+
+		c     *colly.Collector     = colly.NewCollector()
+		infos []models.TorrentInfo = make([]models.TorrentInfo, 0)
+		repo  models.TorrentRepo   = models.TorrentRepo{}
+		ti    models.TorrentInfo   = models.TorrentInfo{}
+	)
+
+	if page == "" {
+		page = "1"
+	}
+
+	url = fmt.Sprintf("https://1337x.to/search/%s/%s/", search, page)
 
 	c.OnHTML("body", func(e *colly.HTMLElement) {
 		if e.DOM.Find("tr").Length() == 0 {

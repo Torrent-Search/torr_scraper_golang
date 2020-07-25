@@ -13,6 +13,11 @@ import (
 func HorriblesubsController(fibCon *fiber.Ctx) {
 	param := url.Values{}
 	param.Add("q", fibCon.Query("search"))
+	if fibCon.Query("page") == "" {
+		param.Add("p", "1")
+	} else {
+		param.Add("p", fibCon.Query("page"))
+	}
 	url := fmt.Sprintf("https://nyaa.si/user/HorribleSubs?f=0&c=0_0&%s", param.Encode())
 	c := colly.NewCollector()
 	var infos = make([]models.TorrentInfo, 0)

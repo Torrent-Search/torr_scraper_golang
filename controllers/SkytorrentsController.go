@@ -14,6 +14,11 @@ func SkytorrentsController(fibCon *fiber.Ctx) {
 	// search := strings.ReplaceAll(strings.TrimSpace(fibCon.Query("search")), " ", "%20")
 	param := url.Values{}
 	param.Add("query", fibCon.Query("search"))
+	if fibCon.Query("page") == "" {
+		param.Add("page", "1")
+	} else {
+		param.Add("page", fibCon.Query("page"))
+	}
 	url := fmt.Sprint("https://www.skytorrents.lol/?", param.Encode())
 
 	c := colly.NewCollector()
