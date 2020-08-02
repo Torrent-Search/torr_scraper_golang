@@ -12,9 +12,16 @@ import (
 
 func PirateBayController(fibCon *fiber.Ctx) {
 
-	url := fmt.Sprintf("https://thepiratebay.zone/search/%s/1/99/0", url.PathEscape(fibCon.Query("search")))
+	var page string
+	if fibCon.Query("page") == "" {
+		page = "1"
+	} else {
+		page = fibCon.Query("page")
+	}
+	url := fmt.Sprintf("https://thepiratebay.zone/search/%s/%s/99/0", url.PathEscape(fibCon.Query("search")), page)
 
 	c := colly.NewCollector()
+
 	var infos = make([]models.TorrentInfo, 0)
 	var repo models.TorrentRepo = models.TorrentRepo{}
 	var ti models.TorrentInfo = models.TorrentInfo{}
