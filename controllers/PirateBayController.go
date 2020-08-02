@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"net/url"
+	"strings"
 
 	"github.com/gocolly/colly/v2"
 	"github.com/gofiber/fiber"
@@ -10,27 +11,35 @@ import (
 )
 
 func PirateBayController(fibCon *fiber.Ctx) {
-	param := url.Values{}
-	param.Add("q", fibCon.Query("search"))
-	url := fmt.Sprintf("https://piratebaylive.com/search?%s&cat%5B%5D=&search=Pirate+Search", param.Encode())
+
+	url := fmt.Sprintf("https://thepiratebay.zone/search/%s/1/99/0", url.PathEscape(fibCon.Query("search")))
+
 	c := colly.NewCollector()
 	var infos = make([]models.TorrentInfo, 0)
 	var repo models.TorrentRepo = models.TorrentRepo{}
 	var ti models.TorrentInfo = models.TorrentInfo{}
 	c.OnHTML("body", func(e *colly.HTMLElement) {
-		selector := e.DOM.Find("#st")
+		selector := e.DOM.Find("tr")
 		if selector.Length() > 1 {
-			e.ForEach("#st", func(i int, e *colly.HTMLElement) {
-				ti.Name = e.ChildText("span.list-item.item-name.item-title")
-				ti.Seeders = e.ChildText("span.list-item.item-seed")
-				ti.Leechers = e.ChildText("span.list-item.item-leech")
-				ti.Date = e.ChildText("span.list-item.item-uploaded")
-				ti.Size = e.ChildText("span.list-item.item-size")
-				ti.Uploader = e.ChildText("span.list-item.item-user")
-				ti.Magnet = e.ChildAttr("span.item-icons a", "href")
-				ti.Url = e.ChildAttr("span.list-item.item-name.item-title a", "href")
+
+			e.ForEach("tr", func(i int, e *colly.HTMLElement) {
+				if i == 0 {
+					return
+				}
+				ti.Name = e.ChildText("td:nth-child(2) div a")
+				ti.Seeders = e.ChildText("td:nth-child(3)")
+				ti.Leechers = e.ChildText("td:nth-child(4)")
+				file_info := e.ChildText("font.detDesc")
+				upload_date_temp := strings.Split(file_info, ",")
+				if len(upload_date_temp) == 1 {
+					return
+				}
+				ti.Date = replace(replace(upload_date_temp[0], "Uploaded ", ""), " ", "-")
+				ti.Size = replace(upload_date_temp[1], " Size ", "")
+				ti.Uploader = replace(upload_date_temp[2], " ULed by ", "")
+				ti.Magnet = e.ChildAttr("td:nth-child(2) a:nth-child(2)", "href")
+				ti.Url = e.ChildAttr("td:nth-child(2) div a", "href")
 				ti.Website = "Pirate Bay"
-				ti.TorrentFileUrl = ""
 				infos = append(infos, ti)
 			})
 		}
@@ -47,4 +56,8 @@ func PirateBayController(fibCon *fiber.Ctx) {
 		}
 	})
 	c.Visit(url)
+}
+
+func replace(str string, new string, old string) string {
+	return strings.ReplaceAll(str, new, old)
 }
