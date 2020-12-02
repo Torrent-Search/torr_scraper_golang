@@ -15,6 +15,11 @@ func main() {
 	app.Use(middleware.Recover())
 	app.Use(middleware.Logger())
 
+	app.Use(func(c *fiber.Ctx) {
+		c.Fasthttp.Response.Header.Add("Access-Control-Allow-Origin", "*")
+		c.Next()
+	})
+
 	grp := app.Group("api")
 	grp.Get("/1337x", controller.Controller1337x)
 	grp.Get("/1337x_mg", controller.Controller1337xMg)
