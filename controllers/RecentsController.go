@@ -52,7 +52,7 @@ func RecentMoviesController(fibCon *fiber.Ctx) {
 	if listType == "short" || listType == "" {
 		c.Visit(url)
 	} else {
-		allRecentMoview(fibCon)
+		allRecentMovie(fibCon)
 	}
 }
 
@@ -164,7 +164,7 @@ func RecentController(fibCon *fiber.Ctx) {
 
 }
 
-func allRecentMoview(fibCon *fiber.Ctx) {
+func allRecentMovie(fibCon *fiber.Ctx) {
 	url := "https://torrentgalaxy.to/latest"
 	c := colly.NewCollector()
 	var infos = make([]models.Recents, 0)
