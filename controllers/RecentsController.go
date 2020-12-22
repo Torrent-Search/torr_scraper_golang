@@ -19,7 +19,7 @@ func RecentMoviesController(fibCon *fiber.Ctx) {
 	var listType string = fibCon.Query("list")
 	var imdbCodes []string = make([]string, 0)
 	c.OnHTML("body", func(e *colly.HTMLElement) {
-		e.ForEach(".panel-body.slidingDivb-b6a23717a851a6fc9b4c2e09f0073f0857d7f4d8 div.t6122e0a75318b88f524f30539f1829f5", func(i int, a *colly.HTMLElement) {
+		e.ForEach(".panel-body.slidingDivb-b6a23717a851a6fc9b4c2e09f0073f0857d7f4d8 .container-fluid .tgxtable div", func(i int, a *colly.HTMLElement) {
 			re.Name = a.ChildText("div:nth-child(1) a b")
 			re.Url = "https://torrentgalaxy.to" + a.ChildAttr("#click div a:nth-child(2)", "href")
 			if len(strings.Split(re.Url, "=")) == 1 {
@@ -66,7 +66,7 @@ func RecentShowsController(fibCon *fiber.Ctx) {
 	var imdbCodes []string = make([]string, 0)
 	c.OnHTML(".panel-body.slidingDivf-6e422c70dd796e04eec79baaea3d169e3f1c5cd1", func(e *colly.HTMLElement) {
 		// div:nth-child(3)
-		e.ForEach("div:nth-child(4) .panel-body.slidingDivb-f4d4d7e21ce39705d6fca31c285a979a77742df9 div:nth-child(2) .tgxtable div.t6122e0a75318b88f524f30539f1829f5", func(i int, a *colly.HTMLElement) {
+		e.ForEach(".panel-body.slidingDivb-f4d4d7e21ce39705d6fca31c285a979a77742df9 .container-fluid .tgxtable div", func(i int, a *colly.HTMLElement) {
 			re.Name = a.ChildText("div:nth-child(1) a b")
 
 			re.Url = "https://torrentgalaxy.to" + a.ChildAttr("#click div a:nth-child(2)", "href")
@@ -173,7 +173,7 @@ func allRecentMovie(fibCon *fiber.Ctx) {
 	var imdbCodes []string = make([]string, 0)
 	c.OnHTML(".panel-body.slidingDivf-327914a1b3f6ce6845672274190f50c58c135c38", func(e *colly.HTMLElement) {
 
-		e.ForEach(".panel-body.slidingDivb-be5a66428eb55e88b1b6036b917ad5bfe6550ed5 .container-fluid .tgxtable div.t6122e0a75318b88f524f30539f1829f5", func(i int, a *colly.HTMLElement) {
+		e.ForEach(".panel-body .container-fluid .tgxtable div", func(i int, a *colly.HTMLElement) {
 			re.Name = a.ChildText("div:nth-child(1) a b")
 
 			re.Url = "https://torrentgalaxy.to" + a.ChildAttr("#click div a:nth-child(2)", "href")
@@ -195,50 +195,7 @@ func allRecentMovie(fibCon *fiber.Ctx) {
 			imdbCodes = append(imdbCodes, re.Imdb_code)
 			infos = append(infos, re)
 		})
-		e.ForEach(".panel-body.slidingDivb-58aff82def33b460cc7a5a1e8d41390b3b6d8ae7 .container-fluid .tgxtable div.t6122e0a75318b88f524f30539f1829f5", func(i int, a *colly.HTMLElement) {
-			re.Name = a.ChildText("div:nth-child(1) a b")
 
-			re.Url = "https://torrentgalaxy.to" + a.ChildAttr("#click div a:nth-child(2)", "href")
-			if len(strings.Split(re.Url, "=")) == 1 {
-				re.Url = "https://torrentgalaxy.to" + a.ChildAttr("#click div a:nth-child(3)", "href")
-				if len(strings.Split(re.Url, "=")) == 1 {
-					return
-				}
-			}
-			if len(strings.Split(re.Url, "=")) == 2 {
-				re.Imdb_code = strings.Split(re.Url, "=")[1]
-			} else {
-				re.Imdb_code = ""
-			}
-			re.ImgFileUrl = helper.GetImgUrl(a.Attr("onmouseover"))
-			if contains(&imdbCodes, re.Imdb_code) {
-				return
-			}
-			imdbCodes = append(imdbCodes, re.Imdb_code)
-			infos = append(infos, re)
-		})
-		e.ForEach(".panel-body.slidingDivb-46b37ed219a36b7a1e15853c1b1a61dcdd3228de .container-fluid .tgxtable div.t6122e0a75318b88f524f30539f1829f5", func(i int, a *colly.HTMLElement) {
-			re.Name = a.ChildText("div:nth-child(1) a b")
-
-			re.Url = "https://torrentgalaxy.to" + a.ChildAttr("#click div a:nth-child(2)", "href")
-			if len(strings.Split(re.Url, "=")) == 1 {
-				re.Url = "https://torrentgalaxy.to" + a.ChildAttr("#click div a:nth-child(3)", "href")
-				if len(strings.Split(re.Url, "=")) == 1 {
-					return
-				}
-			}
-			if len(strings.Split(re.Url, "=")) == 2 {
-				re.Imdb_code = strings.Split(re.Url, "=")[1]
-			} else {
-				re.Imdb_code = ""
-			}
-			re.ImgFileUrl = helper.GetImgUrl(a.Attr("onmouseover"))
-			if contains(&imdbCodes, re.Imdb_code) {
-				return
-			}
-			imdbCodes = append(imdbCodes, re.Imdb_code)
-			infos = append(infos, re)
-		})
 	})
 	c.OnError(func(r *colly.Response, err error) {
 		fmt.Println("Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
@@ -263,7 +220,7 @@ func allRecentShows(fibCon *fiber.Ctx) {
 	var imdbCodes []string = make([]string, 0)
 	c.OnHTML(".panel-body.slidingDivf-327914a1b3f6ce6845672274190f50c58c135c38", func(e *colly.HTMLElement) {
 
-		e.ForEach(".panel-body.slidingDivb-27a8121fbd0b00182db87bc7d301e8bbb71e0367 .container-fluid .tgxtable div.t6122e0a75318b88f524f30539f1829f5", func(i int, a *colly.HTMLElement) {
+		e.ForEach(".panel-body .container-fluid .tgxtable div", func(i int, a *colly.HTMLElement) {
 			re.Name = a.ChildText("div:nth-child(1) a b")
 
 			re.Url = "https://torrentgalaxy.to" + a.ChildAttr("#click div a:nth-child(2)", "href")
@@ -285,28 +242,7 @@ func allRecentShows(fibCon *fiber.Ctx) {
 			imdbCodes = append(imdbCodes, re.Imdb_code)
 			infos = append(infos, re)
 		})
-		e.ForEach(".panel-body.slidingDivb-f45052460401de73c44a8c8dbaa9ac3e31771172 .container-fluid .tgxtable div.t6122e0a75318b88f524f30539f1829f5", func(i int, a *colly.HTMLElement) {
-			re.Name = a.ChildText("div:nth-child(1) a b")
 
-			re.Url = "https://torrentgalaxy.to" + a.ChildAttr("#click div a:nth-child(2)", "href")
-			if len(strings.Split(re.Url, "=")) == 1 {
-				re.Url = "https://torrentgalaxy.to" + a.ChildAttr("#click div a:nth-child(3)", "href")
-				if len(strings.Split(re.Url, "=")) == 1 {
-					return
-				}
-			}
-			if len(strings.Split(re.Url, "=")) == 2 {
-				re.Imdb_code = strings.Split(re.Url, "=")[1]
-			} else {
-				re.Imdb_code = ""
-			}
-			re.ImgFileUrl = helper.GetImgUrl(a.Attr("onmouseover"))
-			if contains(&imdbCodes, re.Imdb_code) {
-				return
-			}
-			imdbCodes = append(imdbCodes, re.Imdb_code)
-			infos = append(infos, re)
-		})
 	})
 	c.OnError(func(r *colly.Response, err error) {
 		fmt.Println("Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
