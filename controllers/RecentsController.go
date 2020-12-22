@@ -117,7 +117,7 @@ func RecentController(fibCon *fiber.Ctx) {
 	)
 
 	c.OnHTML("body", func(e *colly.HTMLElement) {
-		e.ForEach(".panel-body.slidingDivb-b6a23717a851a6fc9b4c2e09f0073f0857d7f4d8 div.tgxtablerow", func(i int, a *colly.HTMLElement) {
+		e.ForEach(".panel-body.slidingDivb-b6a23717a851a6fc9b4c2e09f0073f0857d7f4d8 .container-fluid .tgxtable div", func(i int, a *colly.HTMLElement) {
 			re.Name = a.ChildText("div:nth-child(1) a b")
 			re.Url = "https://torrentgalaxy.to" + a.ChildAttr("#click div a:nth-child(2)", "href")
 			if len(strings.Split(re.Url, "=")) == 1 {
@@ -134,7 +134,7 @@ func RecentController(fibCon *fiber.Ctx) {
 			imdbCodes_movies = append(imdbCodes_movies, re.Imdb_code)
 			infos_movie = append(infos_movie, re)
 		})
-		e.ForEach(".panel-body.slidingDivf-6e422c70dd796e04eec79baaea3d169e3f1c5cd1 div:nth-child(4) .panel-body.slidingDivb-f4d4d7e21ce39705d6fca31c285a979a77742df9 div:nth-child(2) .tgxtable div.tgxtablerow", func(i int, a *colly.HTMLElement) {
+		e.ForEach(".panel-body.slidingDivb-f4d4d7e21ce39705d6fca31c285a979a77742df9 .container-fluid .tgxtable div", func(i int, a *colly.HTMLElement) {
 			re.Name = a.ChildText("div:nth-child(1) a b")
 
 			re.Url = "https://torrentgalaxy.to" + a.ChildAttr("#click div a:nth-child(2)", "href")
