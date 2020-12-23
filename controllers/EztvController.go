@@ -10,7 +10,7 @@ import (
 )
 
 func EztvController(fibCon *fiber.Ctx) {
-	url := fmt.Sprintf("https://eztv.io/search/%s", url.PathEscape(fibCon.Query("search")))
+	url := fmt.Sprintf("https://eztv.tf/search/%s", url.PathEscape(fibCon.Query("search")))
 	c := colly.NewCollector()
 	var infos = make([]models.TorrentInfo, 0)
 	var repo models.TorrentRepo = models.TorrentRepo{}
