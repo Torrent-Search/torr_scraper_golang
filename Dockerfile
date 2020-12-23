@@ -1,4 +1,4 @@
-FROM golang:alpine
+FROM golang:alpine3.12
 # Install git.
 # Git is required for fetching the dependencies.
 RUN apk update && apk add --no-cache git
