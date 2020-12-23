@@ -25,12 +25,15 @@ func TorrentGalaxyController(fibCon *fiber.Ctx) {
 	var ti models.TorrentInfo = models.TorrentInfo{}
 	c.OnHTML("body", func(e *colly.HTMLElement) {
 
-		print(e.DOM.Find("div.tgxtablerow").Length())
-		if e.DOM.Find("div.tgxtablerow").Length() == 0 {
+		print(e.DOM.Find("div.tgxtable").Length())
+		if e.DOM.Find("div.tgxtable").Length() == 0 {
 			return
 		}
-		e.ForEach("div.tgxtablerow", func(i int, e *colly.HTMLElement) {
+		e.ForEach("div.tgxtable div", func(i int, e *colly.HTMLElement) {
 			ti.Name = e.ChildText("div:nth-child(4)")
+			if ti.Name == "" || i == 0 {
+				return
+			}
 			ti.Seeders = e.ChildText("div:nth-child(11) span font:nth-child(1)")
 			ti.Leechers = e.ChildText("div:nth-child(11) span font:nth-child(2)")
 			ti.Date = strings.Split(e.ChildText("div:nth-child(12)"), " ")[0]
