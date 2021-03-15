@@ -47,7 +47,7 @@ func main() {
 	grp.Get("/jiosaavnalbum", controller.JioSaavnAlbumController)
 	grp.Get("/jiosaavnplaylist", controller.JioSaavnPlaylistController)
 	grp.Get("/jiosaavnhome", controller.JioSaavnHomeController)
-
+	grp.Get("/deezer", controller.DeezerController)
 	port := os.Getenv("PORT")
 	app.Settings.CaseSensitive = true
 	app.Settings.StrictRouting = true
