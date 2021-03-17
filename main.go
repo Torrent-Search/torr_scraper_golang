@@ -48,7 +48,7 @@ func main() {
 	grp.Get("/jiosaavnplaylist", controller.JioSaavnPlaylistController)
 	grp.Get("/jiosaavnhome", controller.JioSaavnHomeController)
 	grp.Get("/deezer", controller.DeezerController)
-	grp.Get("/yt", controller.YtsController)
+	grp.Get("/yt", controller.YoutubeController)
 	grp.Get("/yturl", controller.YtAudioUrl)
 
 	port := os.Getenv("PORT")
