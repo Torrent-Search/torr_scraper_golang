@@ -19,4 +19,5 @@ type YtElement struct {
 	Thumbnails []string `json:"thumbnails"`
 	Title      string   `json:"title"`
 	URLSuffix  string   `json:"url_suffix"`
+	Duration   string   `json:"duration"`
 }
