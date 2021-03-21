@@ -57,6 +57,7 @@ RUN set -x && \
     youtube-dl --version > /CONTAINER_VERSION
 
 WORKDIR $GOPATH/src/github.com/scraper/
+RUN mkdir downloads && chmod +x downloads
 COPY . .
 # Fetch dependencies.
 RUN go mod download
