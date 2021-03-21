@@ -50,6 +50,7 @@ func main() {
 	grp.Get("/deezer", controller.DeezerController)
 	grp.Get("/yt", controller.YoutubeController)
 	grp.Get("/yturl", controller.YtAudioUrl)
+	app.Static("/downloads", "./downloads")
 
 	port := os.Getenv("PORT")
 	app.Settings.CaseSensitive = true

@@ -34,17 +34,21 @@ func YoutubeController(fibCon *fiber.Ctx) {
 
 func YtAudioUrl(fibCon *fiber.Ctx) {
 	var (
-		url       string
-		query     string
-		music_url string
+		url      string
+		query    string
+		title    string
+		filename string
 	)
 
 	query = fibCon.Query("search")
+	title = fibCon.Query("title")
 	url = fmt.Sprintf("https://youtube.com%s", query)
 
-	cmd := exec.Command("youtube-dl", "-f", "bestaudio", "-g", url)
+	// .%(ext)s gives unknown verb error when used with fmt.Sprintf
+	filename = fmt.Sprintf("downloads/%s", title) + ".%(ext)s"
+	cmd := exec.Command("youtube-dl", "-f", "bestaudio", "--extract-audio", "--audio-format", "mp3", url, "-o", filename)
 
-	stdout, err := cmd.Output()
+	_, err := cmd.Output()
 
 	if err != nil {
 
@@ -53,7 +57,6 @@ func YtAudioUrl(fibCon *fiber.Ctx) {
 		return
 	}
 
-	music_url = string(stdout)
 	cmd.Process.Kill()
-	fibCon.Status(200).SendString(music_url)
+	fibCon.Status(200).SendString(fmt.Sprintf("downloads/%s.mp3", title))
 }
