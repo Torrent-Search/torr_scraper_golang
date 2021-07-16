@@ -53,7 +53,6 @@ func main() {
 	app.Static("/downloads", "./downloads")
 
 	port := os.Getenv("PORT")
-	// port := "8000"
 	app.Settings.CaseSensitive = true
 	app.Settings.StrictRouting = true
 	app.Listen(":" + port)
