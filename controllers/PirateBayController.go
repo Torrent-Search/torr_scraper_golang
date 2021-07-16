@@ -7,6 +7,7 @@ import (
 
 	"github.com/gocolly/colly/v2"
 	"github.com/gofiber/fiber"
+	helper "github.com/scraper_v2/helper"
 	models "github.com/scraper_v2/models"
 )
 
@@ -62,6 +63,8 @@ func PirateBayController(fibCon *fiber.Ctx) {
 			fibCon.Status(204)
 		}
 	})
+	c.SetProxyFunc(helper.GetProxy())
+
 	c.Visit(url)
 }
 
