@@ -37,8 +37,8 @@ func GetImgUrl(str string) string {
 		return ""
 	}
 	// print(str)
-	re := regexp.MustCompile(`(?i)<img[^>]+src="?([^"\s]+)"?\s*\/>`)
+	re := regexp.MustCompile(`https(.*?)jpg`)
 	// match := re.FindString(str)
 	var imgTags = re.FindAllStringSubmatch(str, -1)
-	return imgTags[0][1]
+	return imgTags[0][0]
 }
