@@ -24,7 +24,7 @@ func LimetorrentsController(fibCon *fiber.Ctx) {
 	if pageNo == "" {
 		pageNo = "1"
 	}
-	searchUrl = fmt.Sprintf("https://www.limetorrents.info/search/all/%s/%s/", search, pageNo)
+	searchUrl = fmt.Sprintf("https://www.limetorrents.pro/search/all/%s/%s/", search, pageNo)
 
 	c.OnHTML("body", func(e *colly.HTMLElement) {
 
@@ -38,7 +38,7 @@ func LimetorrentsController(fibCon *fiber.Ctx) {
 			ti.Date = strings.Split(e.ChildText("td:nth-child(2)"), " - ")[0]
 			ti.Size = e.ChildText("td:nth-child(3)")
 			ti.Magnet = ""
-			ti.Url = "https://www.limetorrents.info" + e.ChildAttr("td.tdleft div.tt-name a:nth-child(2)", "href")
+			ti.Url = "https://www.limetorrents.pro" + e.ChildAttr("td.tdleft div.tt-name a:nth-child(2)", "href")
 			ti.Website = "Limetorrents"
 			ti.Uploader = "N/A"
 			ti.TorrentFileUrl = ""
