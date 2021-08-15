@@ -3,7 +3,6 @@ package controller
 import (
 	"fmt"
 	"net/url"
-	"os"
 	"strings"
 
 	"github.com/gocolly/colly/v2"
@@ -19,13 +18,12 @@ func ZooqleController(fibCon *fiber.Ctx) {
 	} else {
 		param.Add("pg", fibCon.Query("page"))
 	}
-	var url string = fmt.Sprintf("https://zooqle.unblockit.id/search?%s", param.Encode())
+	var url string = fmt.Sprintf("https://zooqle.com/search?%s", param.Encode())
 	var infos = make([]models.TorrentInfo, 0)
 	var repo models.TorrentRepo = models.TorrentRepo{}
 	var ti models.TorrentInfo = models.TorrentInfo{}
 	var c *colly.Collector = colly.NewCollector()
 	var seedLeechString string = ""
-	c.SetProxy(os.Getenv("proxy_qz"))
 	c.OnHTML("body", func(e *colly.HTMLElement) {
 		e.ForEach("tr", func(i int, e *colly.HTMLElement) {
 			if i == 0 {

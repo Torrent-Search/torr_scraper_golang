@@ -26,7 +26,7 @@ func Controller1337x(fibCon *fiber.Ctx) {
 		page = "1"
 	}
 
-	url = fmt.Sprintf("https://1337x.to/search/%s/%s/", search, page)
+	url = fmt.Sprintf("https://1337xx.to/search/%s/%s/", search, page)
 
 	c.OnHTML("body", func(e *colly.HTMLElement) {
 		if e.DOM.Find("tr").Length() == 0 {
@@ -43,7 +43,7 @@ func Controller1337x(fibCon *fiber.Ctx) {
 			ti.Size = e.DOM.Find("td:nth-child(5)").Clone().Children().Remove().End().Text()
 			ti.Uploader = e.ChildText("td:nth-child(6)")
 			ti.Url =
-				"https://1337x.to" +
+				"https://1337xx.to" +
 					e.ChildAttr("td.coll-1.name > a:nth-child(2)", "href")
 			ti.Website = "1337x"
 			ti.TorrentFileUrl = ""
