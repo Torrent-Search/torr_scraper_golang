@@ -40,6 +40,6 @@ func TorrentdownloadsController(fibCon *fiber.Ctx) {
 		repo.Data = &infos
 		fibCon.Status(200).JSON(repo)
 	} else {
-		fibCon.Status(204)
+		fibCon.Status(201)
 	}
 }

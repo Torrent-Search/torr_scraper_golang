@@ -32,7 +32,7 @@ func main() {
 	grp.Get("/limetorrents_mg", controller.LimetorrentsMgController)
 	grp.Get("/thepiratebay", controller.PirateBayController)
 	grp.Get("/skytorrents", func(c *fiber.Ctx) { c.Status(204) })
-	grp.Get("/torrentdownloads", func(c *fiber.Ctx) { c.Status(204) })
+	grp.Get("/torrentdownloads", controller.TorrentdownloadsController)
 	grp.Get("/tgx", controller.TorrentGalaxyController)
 	grp.Get("/yts", controller.YtsController)
 	grp.Get("/tgxmov", controller.RecentMoviesController)
